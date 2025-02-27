@@ -1,4 +1,4 @@
-# Disease Q&A with Perplexity AI API - Interactive Browser App
+# Disease Information App with Sonar API - Interactive Browser App
 # ========================================================
 
 # This notebook demonstrates how to build a disease Q&A system using Perplexity's AI API
@@ -19,7 +19,7 @@ from pathlib import Path
 # -------------------
 
 # Replace with your actual Perplexity API key
-API_KEY = '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'  # This is from your HTML file
+API_KEY = 'API_KEY' 
 API_ENDPOINT = 'https://api.perplexity.ai/chat/completions'
 
 # 3. Function to Query Perplexity API (for testing in notebook)
