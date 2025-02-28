@@ -119,7 +119,7 @@ def main():
     # Save the fact to a file
     save_fact_to_file(today_topic, fact)
     
-    # In a real application, you might send this via email, SMS, etc.
+    # In a real application, you could send this via email, SMS, etc.
     # Example: send_email("Daily Interesting Fact", fact, "your@email.com")
 
 

@@ -1,7 +1,7 @@
 # Disease Information App with Sonar API - Interactive Browser App
 # ========================================================
 
-# This notebook demonstrates how to build a disease Q&A system using Perplexity's AI API
+# This notebook demonstrates how to build a simple disease information app using Perplexity's AI API
 # and generates an HTML file that can be opened in a browser with an interactive UI
 
 # 1. Setup and Dependencies
