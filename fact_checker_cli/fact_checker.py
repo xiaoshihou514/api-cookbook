@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Fact Checker CLI - A tool to identify false or misleading claims in articles or statements
-using Perplexity's Sonar API with structured outputs.
+using Perplexity's Sonar API.
+Structured output is disabled by default.
 """
 
 import argparse
@@ -64,12 +65,10 @@ class FactChecker:
         Returns:
             The API key if found, empty string otherwise.
         """
-        # Try environment variable
         api_key = os.environ.get("PPLX_API_KEY", "")
         if api_key:
             return api_key
 
-        # Try to read from a file named pplx_api_key or .pplx_api_key in the current directory
         for key_file in ["pplx_api_key", ".pplx_api_key", "PPLX_API_KEY", ".PPLX_API_KEY"]:
             key_path = Path(key_file)
             if key_path.exists():
@@ -102,7 +101,7 @@ class FactChecker:
                 "Focus on identifying false, misleading, or unsubstantiated claims."
             )
 
-    def check_claim(self, text: str, model: str = DEFAULT_MODEL, use_structured_output: bool = True) -> Dict[str, Any]:
+    def check_claim(self, text: str, model: str = DEFAULT_MODEL, use_structured_output: bool = False) -> Dict[str, Any]:
         """
         Check the factual accuracy of a claim or article.
 
@@ -122,7 +121,6 @@ class FactChecker:
             "Authorization": f"Bearer {self.api_key}"
         }
 
-        # Basic message structure
         data = {
             "model": model,
             "messages": [
@@ -131,7 +129,6 @@ class FactChecker:
             ]
         }
 
-        # Add structured output format if supported and requested
         can_use_structured_output = model in self.STRUCTURED_OUTPUT_MODELS and use_structured_output
         if can_use_structured_output:
             data["response_format"] = {
@@ -144,17 +141,14 @@ class FactChecker:
             response.raise_for_status()
             result = response.json()
             
-            # Extract any citations from the top-level response if present
             citations = result.get("citations", [])
             
-            # Extract the content from the response
             if "choices" in result and result["choices"] and "message" in result["choices"][0]:
                 content = result["choices"][0]["message"]["content"]
                 
                 if can_use_structured_output:
                     try:
                         parsed = json.loads(content)
-                        # Merge top-level citations if they aren't already in parsed data
                         if citations and "citations" not in parsed:
                             parsed["citations"] = citations
                         return parsed
@@ -187,7 +181,6 @@ class FactChecker:
             A dictionary with parsed JSON fields or with a fallback containing raw response and extracted citations.
         """
         try:
-            # Try to extract JSON from markdown-formatted content
             if "```json" in content:
                 json_content = content.split("```json")[1].split("```")[0].strip()
                 return json.loads(json_content)
@@ -197,7 +190,6 @@ class FactChecker:
             else:
                 return json.loads(content)
         except (json.JSONDecodeError, IndexError):
-            # Fallback: attempt to extract citations using a regex.
             citations = re.findall(r"Sources?:\s*(.+)", content)
             return {
                 "raw_response": content,
@@ -224,15 +216,12 @@ def display_results(results: Dict[str, Any], format_json: bool = False):
         print(json.dumps(results, indent=2))
         return
 
-    # If structured keys exist, we update claim sources if needed.
     if "overall_rating" in results:
-        # If we have a top-level citations list, map inline markers to full URLs.
         citation_list = results.get("citations", [])
         if citation_list and "claims" in results:
             for claim in results["claims"]:
                 updated_sources = []
                 for source in claim.get("sources", []):
-                    # If the source is just a marker like "[13]", extract the number.
                     m = re.match(r"\[(\d+)\]", source.strip())
                     if m:
                         idx = int(m.group(1)) - 1
@@ -275,7 +264,6 @@ def display_results(results: Dict[str, Any], format_json: bool = False):
                     for source in claim["sources"]:
                         print(f"    - {source}")
     
-    # Fallback for non-structured output
     elif "raw_response" in results:
         print("Response:")
         print(results["raw_response"])
@@ -287,7 +275,6 @@ def display_results(results: Dict[str, Any], format_json: bool = False):
             else:
                 print(f"  {results['extracted_citations']}")
     
-    # Also print any top-level citations if present (for extra clarity)
     if "citations" in results:
         print("\nCitations:")
         for citation in results["citations"]:
@@ -330,9 +317,9 @@ def main():
         help="Output results as JSON"
     )
     parser.add_argument(
-        "--no-structured-output", 
+        "--structured-output", 
         action="store_true", 
-        help="Disable structured output format (not recommended)"
+        help="Enable structured output format (default is non-structured output)"
     )
     
     args = parser.parse_args()
@@ -340,7 +327,6 @@ def main():
     try:
         fact_checker = FactChecker(api_key=args.api_key, prompt_file=args.prompt_file)
         
-        # Get text from file if provided
         if args.file:
             try:
                 with open(args.file, "r", encoding="utf-8") as f:
@@ -355,7 +341,7 @@ def main():
         results = fact_checker.check_claim(
             text, 
             model=args.model, 
-            use_structured_output=not args.no_structured_output
+            use_structured_output=args.structured_output
         )
         display_results(results, format_json=args.json)
         
