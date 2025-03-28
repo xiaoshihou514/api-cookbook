@@ -1,20 +1,22 @@
-Fact Checker CLI
+# Fact Checker CLI
 
-A command-line tool that identifies false or misleading claims in articles or statements using Perplexity’s Sonar API for web research.
+A command-line tool that identifies false or misleading claims in articles or statements using Perplexity's Sonar API for web research.
 
-Features
-	•	Analyze claims or entire articles for factual accuracy
-	•	Identify false, misleading, or unverifiable claims
-	•	Provide explanations and corrections for inaccurate information
-	•	Output results in human-readable format or structured JSON
-	•	Cite reliable sources for fact-checking assessments
-	•	Leverages Perplexity’s structured outputs for reliable JSON parsing (for Tier 3+ users)
+## Features
 
-Installation
-	1.	Install required dependencies:
+- Analyze claims or entire articles for factual accuracy  
+- Identify false, misleading, or unverifiable claims  
+- Provide explanations and corrections for inaccurate information  
+- Output results in human-readable format or structured JSON  
+- Cite reliable sources for fact-checking assessments  
+- Leverages Perplexity's structured outputs for reliable JSON parsing (for Tier 3+ users)
 
-pip install requests pydantic
+## Installation
 
+1. Install required dependencies:
+
+   ```bash
+   pip install requests pydantic
 
 	2.	Make the script executable:
 
@@ -25,8 +27,10 @@ chmod +x fact_checker.py
 API Key Setup
 
 The tool requires a Perplexity API key to function. You can provide it in one of these ways:
-	1.	As a command-line argument: --api-key YOUR_API_KEY
-	2.	As an environment variable: export PPLX_API_KEY=YOUR_API_KEY
+	1.	As a command-line argument:
+--api-key YOUR_API_KEY
+	2.	As an environment variable:
+export PPLX_API_KEY=YOUR_API_KEY
 	3.	In a file named pplx_api_key or .pplx_api_key in the same directory as the script:
 
 # Create a file to store your API key
@@ -42,7 +46,6 @@ Quick Start
 
 Here’s a command you can copy and run immediately after setup:
 
-# Make sure your API key is set up as described above, then run:
 ./fact_checker.py -t "The Earth is flat and NASA is hiding the truth."
 
 This will analyze the claim, research it using Perplexity’s Sonar API, and return a detailed fact check with ratings, explanations, and sources.
@@ -73,7 +76,7 @@ Use a Custom Prompt File
 
 Enable Structured Outputs (for Tier 3+ Users)
 
-Structured output is disabled by default. If you want to enable structured outputs (for reliable JSON parsing), pass the --structured-output flag:
+Structured output is disabled by default. To enable structured outputs (for reliable JSON parsing), pass the --structured-output flag:
 
 ./fact_checker.py --text "Vaccines cause autism." --structured-output
 
@@ -120,6 +123,3 @@ Limitations
 	•	Like all language models, the underlying AI may have limitations in certain specialized domains
 	•	The structured outputs feature requires a Tier 3 or higher Perplexity API account
 	•	The tool does not replace professional fact-checking services for highly sensitive or complex content
-
-⸻
-
