@@ -1,7 +1,7 @@
 # Disease Information App with Sonar API - Interactive Browser App
 # ========================================================
 
-# This notebook demonstrates how to build a simple disease information app using Perplexity's AI API
+# This notebook demonstrates how to build a robust disease information app using Perplexity's AI API
 # and generates an HTML file that can be opened in a browser with an interactive UI
 
 # 1. Setup and Dependencies
@@ -14,27 +14,57 @@ from IPython.display import HTML, display, IFrame
 import os
 import webbrowser
 from pathlib import Path
+import logging
+from dotenv import load_dotenv
+from typing import Dict, List, Optional, Union, Any
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("disease_app.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger("disease_app")
 
 # 2. API Configuration
 # -------------------
 
-# Replace with your actual Perplexity API key
-API_KEY = 'API_KEY' 
+# Load environment variables from .env file if it exists
+load_dotenv()
+
+# Get API key from environment variable or use a placeholder
+API_KEY = os.environ.get('PERPLEXITY_API_KEY', 'API_KEY')
 API_ENDPOINT = 'https://api.perplexity.ai/chat/completions'
+
+class ApiError(Exception):
+    """Custom exception for API-related errors."""
+    pass
 
 # 3. Function to Query Perplexity API (for testing in notebook)
 # ----------------------------------
 
-def ask_disease_question(question):
+def ask_disease_question(question: str, api_key: str = API_KEY, model: str = "sonar-pro") -> Optional[Dict[str, Any]]:
     """
     Send a disease-related question to Perplexity API and parse the response.
     
     Args:
-        question (str): The question about a disease
+        question: The question about a disease
+        api_key: The Perplexity API key (defaults to environment variable)
+        model: The model to use for the query (defaults to sonar-pro)
         
     Returns:
-        dict: JSON response with overview, causes, treatments, and citations
+        Dictionary with overview, causes, treatments, and citations or None if an error occurs
+        
+    Raises:
+        ApiError: If there's an issue with the API request
     """
+    if api_key == 'API_KEY':
+        logger.warning("Using placeholder API key. Set PERPLEXITY_API_KEY environment variable.")
+    
     # Construct a prompt instructing the API to output only valid JSON
     prompt = f"""
 You are a medical assistant. Please answer the following question about a disease and provide only valid JSON output.
@@ -52,7 +82,7 @@ Now answer this question:
 
     # Build the payload
     payload = {
-        "model": "sonar-pro",
+        "model": model,
         "messages": [
             {"role": "user", "content": prompt}
         ]
@@ -61,12 +91,18 @@ Now answer this question:
     try:
         # Make the API request
         headers = {
-            "Authorization": f"Bearer {API_KEY}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         
-        response = requests.post(API_ENDPOINT, headers=headers, json=payload)
-        response.raise_for_status()  # Raise exception for 4XX/5XX responses
+        logger.info(f"Sending request to Perplexity API for question: '{question}'")
+        response = requests.post(API_ENDPOINT, headers=headers, json=payload, timeout=30)
+        
+        # Check for HTTP errors
+        if response.status_code != 200:
+            error_msg = f"API request failed with status code {response.status_code}: {response.text}"
+            logger.error(error_msg)
+            raise ApiError(error_msg)
         
         result = response.json()
         
@@ -74,33 +110,56 @@ Now answer this question:
         if result.get("choices") and len(result["choices"]) > 0:
             content = result["choices"][0]["message"]["content"]
             try:
-                return json.loads(content)
-            except json.JSONDecodeError:
-                print("Failed to parse JSON output from API. Raw output:")
-                print(content)
+                parsed_data = json.loads(content)
+                logger.info("Successfully parsed JSON response")
+                
+                # Validate expected keys are present
+                expected_keys = ["overview", "causes", "treatments", "citations"]
+                missing_keys = [key for key in expected_keys if key not in parsed_data]
+                
+                if missing_keys:
+                    logger.warning(f"Response missing expected keys: {missing_keys}")
+                
+                return parsed_data
+            except json.JSONDecodeError as e:
+                error_msg = f"Failed to parse JSON output from API: {str(e)}"
+                logger.error(error_msg)
+                logger.debug(f"Raw content: {content}")
                 return None
         else:
-            print("No answer provided in the response.")
+            logger.error("No answer provided in the response.")
             return None
             
+    except requests.exceptions.Timeout:
+        logger.error("Request timed out")
+        raise ApiError("Request to Perplexity API timed out. Please try again later.")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Request exception: {str(e)}")
+        raise ApiError(f"Error communicating with Perplexity API: {str(e)}")
     except Exception as e:
-        print(f"Error: {e}")
-        return None
+        logger.error(f"Unexpected error: {str(e)}")
+        raise ApiError(f"Unexpected error: {str(e)}")
 
 # 4. Create HTML UI File
 # ----------------------
 
-def create_html_ui(api_key, output_path="disease_qa.html"):
+def create_html_ui(api_key: str, output_path: str = "disease_qa.html") -> str:
     """
     Create an HTML file with the disease Q&A interface
     
     Args:
-        api_key (str): The Perplexity API key
-        output_path (str): The path where the HTML file should be saved
+        api_key: The Perplexity API key
+        output_path: The path where the HTML file should be saved
     
     Returns:
-        str: The path to the created HTML file
+        The absolute path to the created HTML file
     """
+    logger.info(f"Creating HTML UI file at {output_path}")
+    
+    # Sanitize API key for display in logs
+    displayed_key = f"{api_key[:5]}...{api_key[-5:]}" if len(api_key) > 10 else "***"
+    logger.info(f"Using API key: {displayed_key}")
+    
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,6 +211,10 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
     }}
     #askButton:hover {{
       background-color: #0d8a66;
+    }}
+    #askButton:disabled {{
+      background-color: #cccccc;
+      cursor: not-allowed;
     }}
     /* Knowledge card and citations styling */
     #knowledgeCard, #citationsCard {{
@@ -217,6 +280,15 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
       0% {{ transform: rotate(0deg); }}
       100% {{ transform: rotate(360deg); }}
     }}
+    /* Error message styling */
+    #errorMessage {{
+      background-color: #ffeaea;
+      color: #d32f2f;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      display: none;
+    }}
     /* Added footer with tutorial info */
     .footer {{
       text-align: center;
@@ -224,6 +296,16 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
       padding: 1rem;
       font-size: 0.9rem;
       color: #777;
+    }}
+    /* Responsive adjustments */
+    @media (max-width: 600px) {{
+      #qaForm {{
+        flex-direction: column;
+      }}
+      #question {{
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+      }}
     }}
   </style>
 </head>
@@ -239,6 +321,9 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
       <input type="text" id="question" placeholder="Ask a question about a disease (e.g., 'What is stroke?')" required>
       <button type="submit" id="askButton">Ask</button>
     </form>
+    
+    <!-- Error message container -->
+    <div id="errorMessage"></div>
 
     <!-- Knowledge card container -->
     <div id="knowledgeCard">
@@ -266,7 +351,8 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
     </div>
     
     <div class="footer">
-      <p>Created with Sonar API</p>
+      <p>Created with <a href="https://docs.perplexity.ai" target="_blank">Perplexity Sonar API</a></p>
+      <p><small>Last updated: {datetime.now().strftime("%Y-%m-%d")}</small></p>
     </div>
   </div>
 
@@ -275,8 +361,17 @@ def create_html_ui(api_key, output_path="disease_qa.html"):
     const API_KEY = '{api_key}';
     // API endpoint as per Perplexity's documentation
     const API_ENDPOINT = 'https://api.perplexity.ai/chat/completions';
+    
+    // Cache for previously asked questions
+    const questionCache = new Map();
 
     async function askDiseaseQuestion(question) {{
+      // Check if we have a cached response
+      if (questionCache.has(question)) {{
+        console.log('Using cached response');
+        return questionCache.get(question);
+      }}
+    
       // Construct a prompt instructing the API to output only valid JSON
       const prompt = `
 You are a medical assistant. Please answer the following question about a disease and provide only valid JSON output.
@@ -311,7 +406,8 @@ Now answer this question:
         }});
 
         if (!response.ok) {{
-          throw new Error(`Error: ${{response.status}} - ${{response.statusText}}`);
+          const responseText = await response.text();
+          throw new Error(`Error: ${{response.status}} - ${{responseText || response.statusText}}`);
         }}
 
         const result = await response.json();
@@ -321,6 +417,10 @@ Now answer this question:
           const content = result.choices[0].message.content;
           try {{
             const structuredOutput = JSON.parse(content);
+            
+            // Cache the result
+            questionCache.set(question, structuredOutput);
+            
             return structuredOutput;
           }} catch (jsonErr) {{
             throw new Error('Failed to parse JSON output from API. Raw output: ' + content);
@@ -330,19 +430,34 @@ Now answer this question:
         }}
       }} catch (error) {{
         console.error(error);
-        alert(error);
+        throw error;
       }}
     }}
 
     // Utility to show/hide the loading overlay
     function setLoading(isLoading) {{
       document.getElementById('loadingOverlay').style.display = isLoading ? 'flex' : 'none';
+      document.getElementById('askButton').disabled = isLoading;
+    }}
+    
+    // Utility to show/hide error message
+    function showError(message) {{
+      const errorElement = document.getElementById('errorMessage');
+      if (message) {{
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }} else {{
+        errorElement.style.display = 'none';
+      }}
     }}
 
     // Handle form submission
     document.getElementById('qaForm').addEventListener('submit', async (event) => {{
       event.preventDefault();
 
+      // Clear any previous error
+      showError(null);
+      
       // Hide previous results
       document.getElementById('knowledgeCard').style.display = 'none';
       document.getElementById('citationsCard').style.display = 'none';
@@ -350,13 +465,17 @@ Now answer this question:
       // Show loading overlay
       setLoading(true);
 
-      const question = document.getElementById('question').value;
-      const data = await askDiseaseQuestion(question);
-
-      // Hide loading overlay once done
-      setLoading(false);
-
-      if (data) {{
+      const question = document.getElementById('question').value.trim();
+      
+      if (!question) {{
+        showError('Please enter a question about a disease.');
+        setLoading(false);
+        return;
+      }}
+      
+      try {{
+        const data = await askDiseaseQuestion(question);
+        
         // Update the knowledge card with structured data
         document.getElementById('overview').textContent = data.overview || 'N/A';
         document.getElementById('causes').textContent = data.causes || 'N/A';
@@ -373,6 +492,7 @@ Now answer this question:
             link.href = citation;
             link.textContent = citation;
             link.target = '_blank';
+            link.rel = 'noopener noreferrer'; // Security best practice
             li.appendChild(link);
             citationsList.appendChild(li);
           }});
@@ -382,32 +502,55 @@ Now answer this question:
           citationsList.appendChild(li);
         }}
         document.getElementById('citationsCard').style.display = 'block';
+      }} catch (error) {{
+        showError(`Error: ${{error.message}}`);
+      }} finally {{
+        // Hide loading overlay once done
+        setLoading(false);
       }}
+    }});
+    
+    // Initial focus
+    document.addEventListener('DOMContentLoaded', () => {{
+      document.getElementById('question').focus();
     }});
   </script>
 </body>
 </html>
 """
 
-    # Write the HTML to a file
-    with open(output_path, 'w') as f:
-        f.write(html_content)
-    
-    # Get the full path
-    full_path = os.path.abspath(output_path)
-    return full_path
+    try:
+        # Create output directory if it doesn't exist
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            logger.info(f"Created directory: {output_dir}")
+
+        # Write the HTML to a file
+        with open(output_path, 'w') as f:
+            f.write(html_content)
+        
+        # Get the full path
+        full_path = os.path.abspath(output_path)
+        logger.info(f"HTML UI file created successfully at: {full_path}")
+        
+        return full_path
+    except Exception as e:
+        logger.error(f"Error creating HTML UI file: {str(e)}")
+        raise
 
 # 5. Function to Display Results in Notebook (for testing)
 # -----------------------------
 
-def display_results(data):
+def display_results(data: Optional[Dict[str, Any]]) -> None:
     """
     Display the results in a structured format within the notebook.
     
     Args:
-        data (dict): The parsed JSON data from the API
+        data: The parsed JSON data from the API
     """
     if not data:
+        logger.warning("No data to display.")
         print("No data to display.")
         return
     
@@ -439,34 +582,39 @@ def display_results(data):
 # 6. Function to Launch Browser UI
 # -------------------------------
 
-def launch_browser_ui(api_key=API_KEY, html_path="disease_qa.html"):
+def launch_browser_ui(api_key: str = API_KEY, html_path: str = "disease_qa.html") -> str:
     """
     Generate and open the HTML UI in a web browser.
     
     Args:
-        api_key (str): The Perplexity API key
-        html_path (str): Path to save the HTML file
+        api_key: The Perplexity API key
+        html_path: Path to save the HTML file
         
     Returns:
-        str: The path to the created HTML file
+        The path to the created HTML file
     """
-    # Create the HTML file
-    full_path = create_html_ui(api_key, html_path)
-    
-    # Convert to file:// URL format
-    file_url = f"file://{full_path}"
-    
-    # Open in the default web browser
-    print(f"Opening browser UI: {file_url}")
-    webbrowser.open(file_url)
-    
-    return full_path
+    try:
+        # Create the HTML file
+        full_path = create_html_ui(api_key, html_path)
+        
+        # Convert to file:// URL format
+        file_url = f"file://{full_path}"
+        
+        # Open in the default web browser
+        logger.info(f"Opening browser UI: {file_url}")
+        webbrowser.open(file_url)
+        
+        return full_path
+    except Exception as e:
+        logger.error(f"Error launching browser UI: {str(e)}")
+        raise
 
 # 7. Example Usage
 # ---------------
 
 # Example 1: Testing the API in the notebook
 def test_api_in_notebook():
+    """Tests the API with a direct call in the notebook."""
     print("Example 1: Direct API Call")
     print("-------------------------")
     example_question = "What is diabetes?"
@@ -474,96 +622,49 @@ def test_api_in_notebook():
     print("Sending request to Perplexity API...")
 
     # Uncomment the following lines to make a real API call
-    # result = ask_disease_question(example_question)
-    # display_results(result)
-
+    # try:
+    #     result = ask_disease_question(example_question)
+    #     display_results(result)
+    # except ApiError as e:
+    #     print(f"API Error: {str(e)}")
+    
     print("(API call commented out to avoid using your API quota)")
     print("\n")
 
 # Example 2: Generate HTML file and open in browser
 def launch_browser_app():
+    """Generates the HTML app and opens it in the browser."""
     print("Example 2: Launching Browser UI")
     print("-----------------------------")
     print("Generating HTML file and opening in browser...")
     
-    # Create and open the HTML file
-    path = launch_browser_ui()
-    
-    print(f"\nHTML file created at: {path}")
-    print("\nIf the browser doesn't open automatically, you can manually open the file above.")
-    
-    # Show a preview in the notebook (not all notebook environments support this)
     try:
-        display(HTML(f'<p>Preview of UI (may not work in all environments):</p>'))
-        display(IFrame(path, width='100%', height=600))
-    except:
-        print("Preview not available in this environment.")
+        # Create and open the HTML file
+        path = launch_browser_ui()
+        
+        print(f"\nHTML file created at: {path}")
+        print("\nIf the browser doesn't open automatically, you can manually open the file above.")
+        
+        # Show a preview in the notebook (not all notebook environments support this)
+        try:
+            display(HTML(f'<p>Preview of UI (may not work in all environments):</p>'))
+            display(IFrame(path, width='100%', height=600))
+        except Exception as e:
+            logger.warning(f"Failed to display preview: {str(e)}")
+            print("Preview not available in this environment.")
+    except Exception as e:
+        logger.error(f"Error running browser app: {str(e)}")
+        print(f"Error: {str(e)}")
 
-# Run the examples
-test_api_in_notebook()
-launch_browser_app()
-
-# 8. Tutorial Explanation
-# ---------------------
-
-"""
-How this tutorial works:
-
-1. We've created a Python function that generates an HTML file containing the Disease Q&A interface
-2. The HTML file includes all the necessary CSS styling and JavaScript for the UI
-3. The JavaScript code makes requests to the Perplexity API when the user submits a question
-4. We use Python's webbrowser module to automatically open the generated HTML file in a browser
-5. The application runs entirely in the browser, with API requests made directly from JavaScript
-
-Benefits of this approach:
-- Creates a standalone HTML file that can be shared and used independently
-- Provides a clean, professional UI similar to the original HTML
-- No need for a server to run the application
-- API requests are made directly from the browser, reducing complexity
-
-Customization Options:
-- You can modify the HTML template to change the appearance
-- You can update the API prompt format to get different structured data
-- You can add additional fields to the knowledge card
-
-Security Notes:
-- The API key is embedded in the HTML file, which isn't secure for production use
-- For a production app, you should use a backend server to handle API requests
-- This tutorial is for educational purposes only
-"""
-
-# 9. Additional Concepts and Extensions
-# -----------------------------------
-
-"""
-Extensions you could implement:
-1. Add a backend server with Flask to handle API requests (keeping your API key secure)
-2. Implement caching to avoid repeated calls for the same questions
-3. Add a history feature to see previous questions and answers
-4. Create a more sophisticated prompt to get better structured data
-5. Add visualization for disease statistics if available
-6. Implement a feedback mechanism for answers
-7. Add a feature to compare multiple diseases
-
-Production Deployment Options:
-1. Deploy as a simple static site with a serverless backend (like AWS Lambda)
-2. Create a full Flask/Django app with proper API key management
-3. Build a desktop application with Electron
-4. Convert to a mobile app with React Native or Flutter
-"""
-
-# 10. Conclusion
-# ------------
-
-"""
-This notebook demonstrates how to create a browser-based disease Q&A system using Perplexity's AI API.
-The system provides a user-friendly interface for querying information about various diseases.
-
-Key takeaways:
-1. You can create interactive web applications directly from Python
-2. The Perplexity API can be used to create structured responses for specific domains
-3. A properly formatted prompt is key to getting consistent structured data
-4. Combining Python (for generation) and JavaScript (for runtime) gives you flexibility
-
-Remember to replace the API key with your own before sharing this application!
-"""
+# Main execution block
+if __name__ == "__main__":
+    # Check if API key is set
+    if API_KEY == 'API_KEY':
+        print("⚠️  Warning: Using placeholder API key")
+        print("Please set your API key in the PERPLEXITY_API_KEY environment variable")
+        print("or replace 'API_KEY' in the code with your actual key.")
+        print("\nContinuing with demonstration mode...\n")
+    
+    # Run the examples
+    test_api_in_notebook()
+    launch_browser_app()
