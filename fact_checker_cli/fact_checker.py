@@ -117,6 +117,8 @@ class FactChecker:
         Returns:
             The parsed response containing fact check results.
         """
+        if not text or not text.strip():
+            return {"error": "Input text is empty. Cannot perform fact check."}
         user_prompt = f"Fact check the following text and identify any false or misleading claims:\n\n{text}"
 
         headers = {
