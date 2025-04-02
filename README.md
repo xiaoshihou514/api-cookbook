@@ -2,6 +2,17 @@
 
 A collection of practical applications and tools built with [Perplexity's Sonar API](https://sonar.perplexity.ai/), the fastest, most cost-effective AI answer engine with robust search capabilities.
 
+## Contributing
+
+Contributions to this repository are welcome! Whether you want to:
+
+- Fix bugs in existing projects
+- Add new features to current tools
+- Contribute entirely new Sonar API projects
+- Improve documentation or examples
+
+Please check the [CONTRIBUTING.md](./CONTRIBUTING.md) file for guidelines.
+
 ## ⚠️ API Key Required
 
 **Before you begin:** You'll need a Perplexity API key to use any project in this repository. 
@@ -55,17 +66,6 @@ The API offers:
 - Free tier to get started
 - Straightforward documentation
 - Transparent usage-based pricing
-
-## Contributing
-
-Contributions to this repository are welcome! Whether you want to:
-
-- Fix bugs in existing projects
-- Add new features to current tools
-- Contribute entirely new Sonar API projects
-- Improve documentation or examples
-
-Please check the [CONTRIBUTING.md](./CONTRIBUTING.md) file for guidelines.
 
 ## License
 
