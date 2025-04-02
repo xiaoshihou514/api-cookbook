@@ -16,11 +16,11 @@ Please check the [CONTRIBUTING.md](./CONTRIBUTING.md) file for guidelines.
 
 ## Projects
 
-• **Fact Checker CLI** - A command-line tool that analyzes claims or articles for factual accuracy using Sonar API's search capabilities.
+• **[Fact Checker CLI](sonar-use-cases/fact_checker_cli/)** - A command-line tool that analyzes claims or articles for factual accuracy using Sonar API's search capabilities.
 
-• **Daily Knowledge Bot** - Python application that delivers interesting facts about rotating topics using the Perplexity AI API.
+• **[Daily Knowledge Bot](sonar-use-cases/daily_knowledge_bot/)** - Python application that delivers interesting facts about rotating topics using the Perplexity AI API.
 
-• **Disease Information App** - Interactive browser-based application providing structured information about diseases using the Sonar API.
+• **[Disease Information App](sonar-use-cases/daily_knowledge_bot/)** - Interactive browser-based application providing structured information about diseases using the Sonar API.
 
 ## Getting Started
 
