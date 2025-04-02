@@ -15,6 +15,8 @@ from typing import Dict, List, Optional, Any
 
 import requests
 from pydantic import BaseModel, Field
+from newspaper import Article, ArticleException
+from requests.exceptions import RequestException
 
 
 class Claim(BaseModel):
@@ -92,6 +94,8 @@ class FactChecker:
         try:
             with open(prompt_file, 'r', encoding='utf-8') as f:
                 return f.read().strip()
+        except FileNotFoundError:
+            print(f"Warning: Prompt file not found at {prompt_file}", file=sys.stderr)
         except Exception as e:
             print(f"Warning: Could not load system prompt from {prompt_file}: {e}", file=sys.stderr)
             print("Using default system prompt.", file=sys.stderr)
