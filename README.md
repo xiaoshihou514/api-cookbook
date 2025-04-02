@@ -1,5 +1,7 @@
 # Sonar API Projects
 
+![SONAR](assets/perplexity-sonar.png)
+
 A collection of practical applications and tools built with [Perplexity's Sonar API](https://sonar.perplexity.ai/), the fastest, most cost-effective AI answer engine with robust search capabilities.
 
 ## Contributing
