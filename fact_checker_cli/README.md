@@ -16,7 +16,8 @@ A command-line tool that identifies false or misleading claims in articles or st
 ### 1. Install required dependencies
 
 ```bash
-pip install requests pydantic
+# Ensure you are using the same pip associated with the python3 you intend to run the script with
+pip install requests pydantic newspaper3k
 ```
 
 ### 2. Make the script executable
@@ -74,6 +75,12 @@ This will analyze the claim, research it using Perplexity's Sonar API, and retur
 
 ```bash
 ./fact_checker.py --file article.txt
+```
+
+### Check an article from a URL
+
+```bash
+./fact_checker.py --url https://www.example.com/news/article-to-check
 ```
 
 ### Specify a different model

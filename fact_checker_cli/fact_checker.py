@@ -296,9 +296,10 @@ def main():
     input_group = parser.add_mutually_exclusive_group(required=True)
     input_group.add_argument("-t", "--text", type=str, help="Text to fact check")
     input_group.add_argument("-f", "--file", type=str, help="Path to file containing text to fact check")
+    input_group.add_argument("-u", "--url", type=str, help="URL of the article to fact check")
     
     parser.add_argument(
-        "-m", 
+        "-m",
         "--model", 
         type=str, 
         default=FactChecker.DEFAULT_MODEL,
@@ -340,9 +341,35 @@ def main():
             except Exception as e:
                 print(f"Error reading file: {e}", file=sys.stderr)
                 return 1
-        else:
+        elif args.url:
+            try:
+                print(f"Fetching content from URL: {args.url}", file=sys.stderr)
+                response = requests.get(args.url, timeout=15) # Add a timeout
+                response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+                
+                article = Article(url=args.url)
+                article.download(input_html=response.text)
+                article.parse()
+                text = article.text
+                if not text:
+                    print(f"Error: Could not extract text from URL: {args.url}", file=sys.stderr)
+                    return 1
+            except RequestException as e:
+                print(f"Error fetching URL: {e}", file=sys.stderr)
+                return 1
+            except ArticleException as e:
+                 print(f"Error parsing article content: {e}", file=sys.stderr)
+                 return 1
+            except Exception as e: # Catch other potential errors during fetch/parse
+                print(f"An unexpected error occurred while processing the URL: {e}", file=sys.stderr)
+                return 1
+        else: # This corresponds to args.text
             text = args.text
-        
+
+        if not text: # Ensure text is not empty before proceeding
+             print("Error: No text found to fact check.", file=sys.stderr)
+             return 1
+
         print("Fact checking in progress...", file=sys.stderr)
         results = fact_checker.check_claim(
             text, 
