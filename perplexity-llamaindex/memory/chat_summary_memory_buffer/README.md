@@ -46,7 +46,7 @@ messages_dict = [
 
 ### Usage Example
 
-![Chat Buffer Memory Demo](demo/chat_buffer_memory_demo.mov)
+![Chat Buffer Memory Demo](/demo/chat_buffer_memory_demo.mov)
 
 **Multi-Turn Conversation:**
 ```python
