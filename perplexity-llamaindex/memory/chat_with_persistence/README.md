@@ -72,6 +72,11 @@ Initial Query: Detailed London weather report
 Follow-up: Comparative analysis using stored context
 ```
 
+### **Try it out yourself!**
+```bash
+python3 scripts/example_usage.py
+```
+
 ## Persistence Verification
 ```
 import lancedb
