@@ -10,8 +10,8 @@ from pathlib import Path
  from typing import Optional, Dict, Any # Added imports
 
 def research_topic(query: str, model: str):
-     """Placeholder for research function."""
-     print(f"Researching: '{query}' using model '{model}'...")
+    """Placeholder for research function."""
+    print(f"Researching: '{query}' using model '{model}'...")
     # TODO: Implement API call
     return {"summary": "Placeholder summary", "sources": ["placeholder source"]}
 
