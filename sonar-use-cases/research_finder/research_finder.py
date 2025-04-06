@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
 Research Finder CLI - Initial Skeleton
-"""
+ """
 
- import argparse
- import sys
-+import os
-+from pathlib import Path
-+from typing import Optional, Dict, Any # Added imports
+import argparse
+import sys
+import os
+from pathlib import Path
+ from typing import Optional, Dict, Any # Added imports
 
- def research_topic(query: str, model: str):
-    """Placeholder for research function."""
-    print(f"Researching: '{query}' using model '{model}'...")
+def research_topic(query: str, model: str):
+     """Placeholder for research function."""
+     print(f"Researching: '{query}' using model '{model}'...")
     # TODO: Implement API call
     return {"summary": "Placeholder summary", "sources": ["placeholder source"]}
 
