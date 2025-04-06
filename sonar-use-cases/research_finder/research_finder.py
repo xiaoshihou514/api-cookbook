@@ -146,16 +146,54 @@ class ResearchAssistant:
             return {"error": error_message}
         except json.JSONDecodeError:
             return {"error": "Failed to parse API response as JSON", "raw_response": response.text if 'response' in locals() else 'No response object'}
-        except Exception as e:
-            return {"error": f"An unexpected error occurred: {str(e)}"}
+         except Exception as e:
+             return {"error": f"An unexpected error occurred: {str(e)}"}
 
 
-def display_results(results: Dict[str, Any]):
-    """Placeholder for displaying results."""
-    print("\n--- Results ---")
-    print(f"Summary: {results.get('summary')}")
-    print(f"Sources: {results.get('sources')}")
-    print("---------------")
+def display_results(results: Dict[str, Any], output_json: bool = False): # Added output_json flag
+    """
+    Display the research results in a human-readable format or as JSON.
+    """
+    if output_json:
+        print(json.dumps(results, indent=2))
+        return
+
+    if "error" in results:
+        print(f"\n❌ Error: {results['error']}")
+        if "raw_response" in results:
+            print("\n📄 Raw Response Snippet:")
+            raw_response_str = json.dumps(results["raw_response"]) if isinstance(results["raw_response"], dict) else str(results["raw_response"])
+            print(raw_response_str[:500] + ("..." if len(raw_response_str) > 500 else ""))
+        return
+
+    print("\n✅ Research Complete!")
+    print("\n📝 SUMMARY:")
+    print(results.get("summary", "No summary provided."))
+
+    sources = results.get("sources")
+    if sources:
+        print("\n🔗 SOURCES:")
+        if isinstance(sources, list):
+            for i, source in enumerate(sources, 1):
+                 # Handle potential dict format from citations or simple string/url
+                 if isinstance(source, dict):
+                     title = source.get('title', 'No Title')
+                     url = source.get('url', '')
+                     print(f"  {i}. {title}{(' (' + url + ')') if url else ''}")
+                 elif isinstance(source, str):
+                     print(f"  {i}. {source}")
+                 else:
+                     print(f"  {i}. {str(source)}") # Fallback
+        else:
+             print(f"  {sources}") # Handle if sources isn't a list
+    else:
+        print("\n🔗 SOURCES: No sources were explicitly listed or extracted.")
+        # Optionally show raw response if no sources found
+        # if "raw_response" in results:
+        #      print("(Check raw response below for potential sources within the text)")
+        #      print("\n📄 Raw Response:")
+        #      print(results["raw_response"])
+
 
 def main():
     """Main entry point."""
