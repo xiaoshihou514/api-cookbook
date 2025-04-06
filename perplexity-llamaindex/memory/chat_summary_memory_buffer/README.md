@@ -93,6 +93,7 @@ This implementation solves key LLM conversation challenges:
 The architecture enables production-grade chat applications with Perplexity's Sonar models while maintaining LlamaIndex's powerful memory management capabilities.
 
 Citations:
+```text
 [1] https://docs.llamaindex.ai/en/stable/examples/agent/memory/summary_memory_buffer/
 [2] https://ai.plainenglish.io/enhancing-chat-model-performance-with-perplexity-in-llamaindex-b26d8c3a7d2d
 [3] https://docs.llamaindex.ai/en/v0.10.34/examples/memory/ChatSummaryMemoryBuffer/
@@ -112,5 +113,5 @@ Citations:
 [17] https://docs.llamaindex.ai/en/stable/understanding/using_llms/using_llms/
 [18] https://apify.com/jons/perplexity-actor/api
 [19] https://docs.llamaindex.ai
-
+```
 ---
