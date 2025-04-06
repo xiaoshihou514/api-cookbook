@@ -77,13 +77,77 @@ class ResearchAssistant:
         return (
             "You are an AI research assistant. Your task is to research the user's query, "
             "provide a concise summary, and list the sources used."
-        )
+         )
 
     def research_topic(self, query: str, model: str = DEFAULT_MODEL) -> Dict[str, Any]:
-        """Placeholder for research function."""
-        print(f"Researching (placeholder): '{query}' using model '{model}'...")
-        # TODO: Implement actual API call here
-        return {"summary": "Placeholder summary", "sources": ["placeholder source"], "raw_response": ""}
+        """
+        Research a given topic or question using the Perplexity API.
+        """
+        if not query or not query.strip():
+            return {"error": "Input query is empty. Cannot perform research."}
+
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+
+        data = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": query}
+            ]
+            # Consider adding other parameters like temperature, max_tokens if needed
+        }
+
+        try:
+            # Increased timeout for potentially longer research tasks
+            response = requests.post(self.API_URL, headers=headers, json=data, timeout=90)
+            response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+            result = response.json()
+
+            if "choices" in result and result["choices"] and "message" in result["choices"][0]:
+                content = result["choices"][0]["message"]["content"]
+                # Basic parsing attempt (can be improved)
+                summary = content # Default to full content
+                sources_list = result.get("citations", []) # Use structured citations if available
+
+                # Simple text parsing if no structured citations and "Sources:" marker exists
+                if not sources_list and "Sources:" in content:
+                    try:
+                        parts = content.split("Sources:", 1)
+                        summary = parts[0].strip()
+                        sources_text = parts[1].strip()
+                        sources_list = [s.strip().lstrip('- ') for s in sources_text.split('\n') if s.strip()]
+                    except Exception:
+                        summary = content # Revert if parsing fails
+                        sources_list = []
+
+                return {
+                    "summary": summary,
+                    "sources": sources_list,
+                    "raw_response": content
+                }
+            else:
+                error_msg = "Unexpected API response format."
+                if "error" in result:
+                    error_msg += f" API Error: {result['error'].get('message', 'Unknown error')}"
+                return {"error": error_msg, "raw_response": result}
+
+        except RequestException as e:
+            error_message = f"API request failed: {str(e)}"
+            if e.response is not None:
+                try:
+                    error_details = e.response.json()
+                    error_message += f" - {error_details.get('error', {}).get('message', e.response.text)}"
+                except json.JSONDecodeError:
+                    error_message += f" - Status Code: {e.response.status_code}"
+            return {"error": error_message}
+        except json.JSONDecodeError:
+            return {"error": "Failed to parse API response as JSON", "raw_response": response.text if 'response' in locals() else 'No response object'}
+        except Exception as e:
+            return {"error": f"An unexpected error occurred: {str(e)}"}
 
 
 def display_results(results: Dict[str, Any]):
