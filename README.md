@@ -34,4 +34,7 @@ To use any of the projects in this repository, you'll need:
 Each project includes its own README with specific installation and usage instructions.
 
 
+## License
+
+Unless otherwise specified, all projects in this repository are licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
