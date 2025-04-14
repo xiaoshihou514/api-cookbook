@@ -2,15 +2,6 @@
 
 This guide demonstrates how to integrate Perplexity’s Sonar API into the OpenAI SDK using a custom asynchronous client. The example shows how to create an agent that leverages the custom LLM provider, set up function tools, and run a sample query. This is ideal if you want to extend or customize your integration of the Sonar API for various applications.
 
-## Table of Contents
-	•	Overview
-	•	Prerequisites
-	•	Environment Setup
-	•	Usage
-	•	Code Walkthrough
-	•	Running the Example
-	•	References
-
 ## Overview
 
 This example involves:
@@ -22,11 +13,11 @@ This example involves:
 ## Prerequisites
 	•	Python 3.7 or later.
 	•	Required Python packages:
-	•	openai
-	•	nest_asyncio
+	•	`openai`
+	•	`nest_asyncio`
 	•	The custom agents package (ensure this is installed or available in your environment).
 
-Install dependencies via pip if needed:
+Install dependencies via `pip` if needed:
 
 ```bash
 pip install openai nest_asyncio
