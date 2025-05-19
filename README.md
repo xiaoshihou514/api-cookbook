@@ -1,5 +1,7 @@
 # Sonar API Projects
 
+NOTE: This repo is still under construction by the Sonar team! Feel free to check back at a later time. 
+
 ![SONAR](assets/perplexity-sonar.png)
 
 A collection of practical applications and tools built with [Perplexity's Sonar API](https://sonar.perplexity.ai/), the fastest, most cost-effective AI answer engine with robust search capabilities.
