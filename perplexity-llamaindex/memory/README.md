@@ -1,4 +1,3 @@
-Here’s a brief README for the `memory` directory:
 # Memory Management with LlamaIndex and Perplexity Sonar API
 
 ## Overview
