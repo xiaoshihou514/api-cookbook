@@ -1,0 +1,122 @@
+name: Sync Cookbook to Docs Site
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  sync-cookbook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout cookbook repository
+        uses: actions/checkout@v4
+        with:
+          path: cookbook-repo
+          
+      - name: Checkout docs repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.DOCS_REPO_NAME || 'ppl-ai/api-docs' }}
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          path: docs-repo
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: docs-repo/package.json
+          
+      - name: Install docs dependencies
+        run: |
+          cd docs-repo
+          npm install
+          
+      - name: Clear existing cookbook content
+        run: |
+          rm -rf docs-repo/cookbook/* || true
+          
+      - name: Copy cookbook content to docs repository
+        run: |
+          # Create cookbook directory if it doesn't exist
+          mkdir -p docs-repo/cookbook
+          
+          # Copy docs content from cookbook to docs repo (already in MDX format)
+          cp -r cookbook-repo/docs/* docs-repo/cookbook/
+          
+          # Copy static assets if they exist
+          if [ -d "cookbook-repo/static" ]; then
+            mkdir -p docs-repo/cookbook/static
+            cp -r cookbook-repo/static/* docs-repo/cookbook/static/
+          fi
+          
+      - name: Generate cookbook navigation
+        run: |
+          cd docs-repo  
+          # Run the navigation generation script
+          node scripts/generate-cookbook-nav.js
+          
+      - name: Configure git
+        run: |
+          cd docs-repo
+          git config --local user.email "cookbook-sync@perplexity.ai"
+          git config --local user.name "Cookbook Sync Bot"
+          
+      - name: Commit and push changes
+        run: |
+          cd docs-repo
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "CHANGES_MADE=false" >> $GITHUB_ENV
+          else
+            git commit -m "📚 Sync cookbook from ${{ github.repository }}@${{ github.sha }}
+
+            Updated cookbook content and navigation from community contributions.
+            
+            Source: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+            git push
+            echo "CHANGES_MADE=true" >> $GITHUB_ENV
+          fi
+          
+      - name: Create deployment comment
+        if: env.CHANGES_MADE == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.sha;
+            
+            await github.rest.repos.createCommitComment({
+              owner,
+              repo, 
+              commit_sha: sha,
+              body: `✅ **Cookbook sync completed successfully!**
+              
+              The cookbook content has been synced to the docs site and navigation has been updated automatically.
+              
+              📈 Changes will be live on docs.perplexity.ai within a few minutes.
+              
+              🔗 [View docs site](https://docs.perplexity.ai/cookbook)`
+            });
+            
+      - name: Report sync failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.sha;
+            
+            await github.rest.repos.createCommitComment({
+              owner,
+              repo,
+              commit_sha: sha,
+              body: `❌ **Cookbook sync failed**
+              
+              There was an error syncing the cookbook content to the docs site. 
+              Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+              
+              The docs site may not reflect the latest cookbook changes until this is resolved.`
+            }); 

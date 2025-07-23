@@ -1,3 +1,10 @@
+---
+title: Fact Checker CLI
+description: A command-line tool that identifies false or misleading claims in articles or statements using Perplexity's Sonar API
+sidebar_position: 1
+keywords: [fact-checking, cli, verification, journalism, research]
+---
+
 # Fact Checker CLI
 
 A command-line tool that identifies false or misleading claims in articles or statements using Perplexity's Sonar API for web research.
@@ -16,7 +23,10 @@ A command-line tool that identifies false or misleading claims in articles or st
 ### 1. Install required dependencies
 
 ```bash
-# Ensure you are using the same pip associated with the python3 you intend to run the script with
+# Install from requirements file (recommended)
+pip install -r requirements.txt
+
+# Or install manually
 pip install requests pydantic newspaper3k
 ```
 
