@@ -82,41 +82,67 @@ jobs:
           
       - name: Create deployment comment
         if: env.CHANGES_MADE == 'true'
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
-            const { owner, repo } = context.repo;
-            const sha = context.sha;
-            
-            await github.rest.repos.createCommitComment({
-              owner,
-              repo, 
-              commit_sha: sha,
-              body: `✅ **Cookbook sync completed successfully!**
+            try {
+              const { owner, repo } = context.repo;
+              const sha = context.sha;
               
-              The cookbook content has been synced to the docs site and navigation has been updated automatically.
-              
-              📈 Changes will be live on docs.perplexity.ai within a few minutes.
-              
-              🔗 [View docs site](https://docs.perplexity.ai/cookbook)`
-            });
+              await github.rest.repos.createCommitComment({
+                owner,
+                repo, 
+                commit_sha: sha,
+                body: `✅ **Cookbook sync completed successfully!**
+                
+                The cookbook content has been synced to the docs site and navigation has been updated automatically.
+                
+                📈 Changes will be live on docs.perplexity.ai within a few minutes.
+                
+                🔗 [View docs site](https://docs.perplexity.ai/cookbook)`
+              });
+              console.log('✅ Success comment posted successfully');
+            } catch (error) {
+              console.log('⚠️ Could not post comment (insufficient permissions):', error.message);
+              console.log('✅ Sync completed successfully anyway!');
+            }
             
       - name: Report sync failure
         if: failure()
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
-            const { owner, repo } = context.repo;
-            const sha = context.sha;
+            try {
+              const { owner, repo } = context.repo;
+              const sha = context.sha;
+              
+              await github.rest.repos.createCommitComment({
+                owner,
+                repo,
+                commit_sha: sha,
+                body: `❌ **Cookbook sync failed**
+                
+                There was an error syncing the cookbook content to the docs site. 
+                Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+                
+                The docs site may not reflect the latest cookbook changes until this is resolved.`
+              });
+            } catch (error) {
+              console.log('⚠️ Could not post failure comment (insufficient permissions):', error.message);
+              console.log('❌ Sync failed - check workflow logs for details');
+            }
             
-            await github.rest.repos.createCommitComment({
-              owner,
-              repo,
-              commit_sha: sha,
-              body: `❌ **Cookbook sync failed**
-              
-              There was an error syncing the cookbook content to the docs site. 
-              Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
-              
-              The docs site may not reflect the latest cookbook changes until this is resolved.`
-            }); 
+      - name: Log sync status
+        if: always()
+        run: |
+          if [ "${{ env.CHANGES_MADE }}" = "true" ]; then
+            echo "🎉 COOKBOOK SYNC SUCCESS!"
+            echo "📚 Content synced to docs repository"
+            echo "🔧 Navigation updated automatically"
+            echo "🚀 Changes will be live on docs.perplexity.ai within minutes"
+          else
+            echo "ℹ️  No changes to sync"
+            echo "📄 Cookbook content is already up to date"
+          fi 
