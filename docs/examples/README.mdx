@@ -1,0 +1,150 @@
+---
+title: Examples Overview
+description: Ready-to-use applications demonstrating Perplexity Sonar API capabilities
+sidebar_position: 1
+keywords: [examples, applications, demos, sonar-api]
+---
+
+# Examples Overview
+
+Welcome to the **Perplexity Sonar API Examples** collection! These are production-ready applications that demonstrate real-world use cases of the Sonar API.
+
+## 🚀 Quick Start
+
+Navigate to any example directory and follow the instructions in the README.md file.
+
+## 📋 Available Examples
+
+### 🔍 [Fact Checker CLI](fact-checker-cli/)
+
+**Purpose**: Verify claims and articles for factual accuracy  
+**Type**: Command-line tool  
+**Use Cases**: Journalism, research, content verification  
+
+**Key Features**:
+- Structured claim analysis with ratings
+- Source citation and evidence tracking
+- JSON output for automation
+- Professional fact-checking workflow
+
+**Quick Start**:
+```bash
+cd fact-checker-cli/
+python fact_checker.py --text "The Earth is flat"
+```
+
+---
+
+### 🤖 [Daily Knowledge Bot](daily-knowledge-bot/)
+
+**Purpose**: Automated daily fact delivery system  
+**Type**: Scheduled Python application  
+**Use Cases**: Education, newsletters, personal learning  
+
+**Key Features**:
+- Topic rotation based on calendar
+- Persistent storage of facts
+- Configurable scheduling
+- Educational content generation
+
+**Quick Start**:
+```bash
+cd daily-knowledge-bot/
+python daily_knowledge_bot.py
+```
+
+---
+
+### 🏥 [Disease Information App](disease-qa/)
+
+**Purpose**: Interactive medical information lookup  
+**Type**: Web application (HTML/JavaScript)  
+**Use Cases**: Health education, medical reference, patient information  
+
+**Key Features**:
+- Interactive browser interface
+- Structured medical knowledge cards
+- Citation tracking for medical sources
+- Standalone deployment ready
+
+**Quick Start**:
+```bash
+cd disease-qa/
+jupyter notebook disease_qa_tutorial.ipynb
+```
+
+---
+
+### 📚 [Academic Research Finder](research-finder/)
+
+**Purpose**: Academic literature discovery and summarization  
+**Type**: Command-line research tool  
+**Use Cases**: Academic research, literature reviews, scholarly work  
+
+**Key Features**:
+- Academic source prioritization
+- Paper citation extraction with DOI links
+- Research-focused prompting
+- Scholarly workflow integration
+
+**Quick Start**:
+```bash
+cd research-finder/
+python research_finder.py "quantum computing advances"
+```
+
+## 🔑 API Key Setup
+
+All examples require a Perplexity API key. You can set it up in several ways:
+
+### Environment Variable (Recommended)
+```bash
+export PPLX_API_KEY="your-api-key-here"
+```
+
+### .env File
+Create a `.env` file in the example directory:
+```bash
+PERPLEXITY_API_KEY=your-api-key-here
+```
+
+### Command Line Argument
+```bash
+python script.py --api-key your-api-key-here
+```
+
+## 🛠️ Common Requirements
+
+All examples require:
+- **Python 3.7+**
+- **Perplexity API Key** ([Get one here](https://docs.perplexity.ai/guides/getting-started))
+- **Internet connection** for API calls
+
+Additional requirements vary by example and are listed in each `requirements.txt` file.
+
+## 🎯 Choosing the Right Example
+
+| **If you want to...** | **Use this example** |
+|------------------------|----------------------|
+| Verify information accuracy | **Fact Checker CLI** |
+| Learn something new daily | **Daily Knowledge Bot** |
+| Look up medical information | **Disease Information App** |
+| Research academic topics | **Academic Research Finder** |
+
+## 🤝 Contributing
+
+Found a bug or want to improve an example? We welcome contributions!
+
+1. **Report Issues**: Open an issue describing the problem
+2. **Suggest Features**: Propose new functionality or improvements
+3. **Submit Code**: Fork, implement, and submit a pull request
+
+See our [Contributing Guidelines](https://github.com/ppl-ai/api-cookbook/blob/main/CONTRIBUTING.md) for details.
+
+## 📄 License
+
+All examples are licensed under the [MIT License](https://github.com/ppl-ai/api-cookbook/blob/main/LICENSE).
+
+---
+
+**Ready to explore?** Pick an example above and start building with Perplexity's Sonar API! 🚀 
