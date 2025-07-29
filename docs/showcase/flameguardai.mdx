@@ -161,3 +161,392 @@ We’re proud to stand with homeowners — not just to raise awareness, but to e
 
 Big thanks to **DevPost** and **Perplexity** for making this hackathon possible. Without the **Perplexity Sonar API**, this level of structured, trusted, AI-driven research would simply not be possible.
 
+
+# FlameGuardAI MCP Server Setup Guide
+
+## Connect FlameGuardAI to Claude Desktop for AI-Powered Fire Risk Analysis
+
+Transform Claude Desktop into a powerful fire risk assessment tool by connecting it to FlameGuardAI's remote MCP (Model Context Protocol) server. This integration allows you to analyze properties for fire risks, get detailed prevention recommendations, and access professional resources - all through natural conversation with Claude.
+
+---
+
+## 🔥 What You'll Get
+
+With FlameGuardAI MCP integration, Claude can:
+
+- **🏠 Analyze Property Fire Risks**: Describe your property and get comprehensive fire risk assessments
+- **📋 Generate Prevention Recommendations**: Receive detailed DIY solutions and professional guidance
+- **🛒 Find Local Resources**: Get information about material suppliers and professional services in your area
+- **📊 Create Assessment Reports**: Generate detailed reports with actionable fire prevention strategies
+- **🔍 Research Fire Safety**: Access specialized fire prevention research powered by Perplexity AI
+
+---
+
+## 📋 Prerequisites
+
+Before you begin, make sure you have:
+
+- **Claude Desktop App**: Download from [claude.ai](https://claude.ai/download) (latest version required)
+- **FlameGuardAI Account**: Sign up at [https://flameguardai.dlyog.com](https://flameguardai.dlyog.com)
+- **Node.js**: Download from [nodejs.org](https://nodejs.org/) (for the MCP proxy)
+- **Active Internet Connection**: Required for remote MCP server communication
+
+> **💡 Note**: This integration works with Claude Desktop on Mac and Windows. The free Claude plan doesn't support MCP integrations - you'll need a Claude Pro, Team, or Enterprise subscription.
+
+---
+
+## 🚀 Step-by-Step Setup
+
+### Step 1: Verify Your System Requirements
+
+**Check if Node.js is installed:**
+```bash
+node --version
+npm --version
+```
+
+If you don't see version numbers, [download and install Node.js](https://nodejs.org/).
+
+**Verify Claude Desktop version:**
+- Open Claude Desktop
+- Go to Claude menu → About Claude
+- Ensure you have the latest version (MCP support requires recent versions)
+
+### Step 2: Create FlameGuardAI Account
+
+1. **Visit FlameGuardAI**: Go to [https://flameguardai.dlyog.com](https://flameguardai.dlyog.com)
+2. **Sign Up**: Create your account with a valid email address
+3. **Verify Email**: Check your inbox and verify your email address
+4. **Complete Profile**: Fill out your profile information
+
+> **🔐 Important**: Remember your email address - you'll need it for MCP authentication.
+
+### Step 3: Configure Claude Desktop
+
+**1. Open Claude Desktop Configuration:**
+
+**On Mac:**
+```bash
+open "~/Library/Application Support/Claude/claude_desktop_config.json"
+```
+
+**On Windows:**
+- Go to: `%APPDATA%\Claude\claude_desktop_config.json`
+- Or: File → Settings → Developer → Edit Config
+
+**2. Add FlameGuardAI MCP Server:**
+
+If the file is empty or doesn't exist, create it with this content:
+
+```json
+{
+  "mcpServers": {
+    "flameguard-ai": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp-flameguardai.dlyog.com/sse"
+      ]
+    }
+  }
+}
+```
+
+If you already have other MCP servers configured, add the FlameGuardAI entry to your existing `mcpServers` object:
+
+```json
+{
+  "mcpServers": {
+    "your-existing-server": {
+      "command": "...",
+      "args": ["..."]
+    },
+    "flameguard-ai": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp-flameguardai.dlyog.com/sse"
+      ]
+    }
+  }
+}
+```
+
+**3. Save and Restart:**
+- Save the configuration file
+- Completely quit Claude Desktop (⌘+Q on Mac, Alt+F4 on Windows)
+- Reopen Claude Desktop
+
+### Step 4: Verify the Connection
+
+**1. Look for the Tools Icon:**
+After restarting Claude Desktop, you should see a 🔨 (hammer) icon in the bottom right corner of the input area.
+
+**2. Check Available Tools:**
+Click the hammer icon to see the FlameGuardAI tools:
+- `request_auth_code` - Request email verification code
+- `authenticate_user` - Complete authentication with verification code
+- `fire_risk_deep_research` - Perform comprehensive fire risk analysis
+- `logout_user` - End your authentication session
+
+**3. Test the Connection:**
+Try asking Claude: *"Can you help me set up FlameGuardAI fire risk analysis?"*
+
+Claude should recognize the available tools and offer to help you get started.
+
+---
+
+## 🔐 Authentication Process
+
+FlameGuardAI uses a secure email-based authentication system to protect your data and ensure you have a valid account.
+
+### First-Time Authentication
+
+**1. Request Authentication Code:**
+Ask Claude: *"I want to use FlameGuardAI. My email is your-email@example.com"*
+
+Claude will use the `request_auth_code` tool and you'll see a message like:
+```
+✅ Authentication code sent successfully!
+📧 Email: your-email@example.com
+📨 A 6-digit verification code has been sent to your email address.
+```
+
+**2. Check Your Email:**
+- Look for an email from FlameGuardAI with your 6-digit verification code
+- The code expires in 10 minutes
+
+**3. Complete Authentication:**
+Tell Claude: *"My verification code is 123456"* (replace with your actual code)
+
+Claude will use the `authenticate_user` tool and confirm:
+```
+✅ Authentication successful!
+👤 User: your-email@example.com
+🔑 Session established
+⏰ Session active for this conversation
+```
+
+### Session Management
+
+- **Session Duration**: Your authentication session lasts for the current Claude conversation
+- **Re-authentication**: You'll need to authenticate again in new conversations
+- **Logout**: Use `logout_user` tool or simply start a new conversation
+
+---
+
+## 🏠 Using FlameGuardAI for Fire Risk Analysis
+
+Once authenticated, you can perform comprehensive fire risk assessments using natural language.
+
+### Basic Fire Risk Analysis
+
+**Example Prompt:**
+> "Analyze my property for fire risks. I have a two-story wooden house with a cedar shake roof. There's dry vegetation within 30 feet of the house, and I'm located in ZIP code 90210, California."
+
+**What Happens:**
+1. Claude recognizes this needs fire risk analysis
+2. Asks permission to use the `fire_risk_deep_research` tool
+3. Processes your property description
+4. Triggers comprehensive AI research using Perplexity API
+5. Provides immediate status and promises detailed email report
+
+### Advanced Analysis with Context
+
+**Example Prompt:**
+> "I need a detailed fire risk assessment for my property. Here are the details:
+> 
+> - Location: 94102, San Francisco, CA
+> - Structure: 1920s Victorian home, wood frame construction
+> - Roofing: Asphalt shingles, gutters need cleaning
+> - Landscaping: Eucalyptus trees 20 feet from house, dry grass in backyard
+> - Surroundings: Dense urban neighborhood, nearby hills
+> - Specific concerns: Electrical panel is old, I noticed some exposed wiring
+> 
+> I'm particularly worried about wildfire risk and want both DIY solutions and professional recommendations."
+
+### What You'll Receive
+
+**Immediate Response:**
+- Confirmation of analysis initiation
+- Assessment ID for tracking
+- Estimated completion time (5-8 minutes)
+
+**Detailed Email Report Includes:**
+- **Risk Assessment Summary**: Overall fire risk level and key concerns
+- **Educational DIY Solutions**: Step-by-step fire prevention measures you can implement
+- **Professional Recommendations**: When to call experts and what services to seek
+- **Material Supplier Information**: Local suppliers for fire-resistant materials
+- **Permit and Safety Requirements**: Local regulations and compliance information
+- **Priority Action Items**: What to address first based on risk level
+
+---
+
+## 🛠️ Available Tools Reference
+
+### `request_auth_code`
+**Purpose**: Request 6-digit verification code for authentication
+**Usage**: "Send me an authentication code for email@example.com"
+**Response**: Confirmation that code was sent to your email
+
+### `authenticate_user`
+**Purpose**: Complete authentication with email and verification code
+**Usage**: "Authenticate me with email email@example.com and code 123456"
+**Response**: Session confirmation and access to fire risk tools
+
+### `fire_risk_deep_research`
+**Purpose**: Perform comprehensive AI-powered fire risk analysis
+**Required**: Valid authentication, property description, ZIP code
+**Usage**: Describe your property and fire risk concerns in natural language
+**Response**: Analysis confirmation and promise of detailed email report
+
+### `logout_user`
+**Purpose**: End authentication session
+**Usage**: "Log me out of FlameGuardAI"
+**Response**: Logout confirmation
+
+---
+
+## 🔧 Troubleshooting
+
+### Tools Icon Not Appearing
+
+**1. Check Node.js Installation:**
+```bash
+node --version
+npm --version
+```
+
+**2. Test MCP Proxy:**
+```bash
+npx mcp-remote https://mcp-flameguardai.dlyog.com/sse
+```
+Should show "Proxy established successfully"
+
+**3. Verify Configuration File:**
+- Check file location is correct
+- Ensure JSON syntax is valid (use a JSON validator)
+- Make sure you have the exact URLs as shown in this guide
+
+**4. Check Claude Desktop Logs:**
+
+**On Mac:**
+```bash
+ls ~/Library/Logs/Claude/
+tail -f ~/Library/Logs/Claude/mcp-server-flameguard-ai.log
+```
+
+**On Windows:**
+- Check: `%LOCALAPPDATA%\Claude\logs\`
+
+### Authentication Issues
+
+**Problem**: "Authentication failed" messages
+
+**Solutions:**
+1. **Verify Email**: Ensure you're using the exact email from your FlameGuardAI account
+2. **Check Verification Code**: Codes expire in 10 minutes - request a new one if needed
+3. **Account Status**: Make sure your FlameGuardAI account is active and verified
+
+### Connection Problems
+
+**Problem**: Cannot connect to FlameGuardAI server
+
+**Solutions:**
+1. **Internet Connection**: Verify you have stable internet access
+2. **Firewall**: Check if your firewall is blocking the connection
+3. **Server Status**: Visit [https://flameguardai.dlyog.com](https://flameguardai.dlyog.com) to check if the service is online
+
+### Analysis Not Working
+
+**Problem**: Fire risk analysis fails or errors
+
+**Solutions:**
+1. **Authentication**: Ensure you're properly authenticated in the current conversation
+2. **Property Description**: Provide detailed property information including ZIP code
+3. **Session Timeout**: Re-authenticate if your session has expired
+
+---
+
+## 💡 Best Practices
+
+### Getting Better Analysis Results
+
+**1. Provide Detailed Descriptions:**
+- Include specific construction materials (wood, stucco, metal, etc.)
+- Mention roofing type and condition
+- Describe surrounding vegetation and landscaping
+- Note any existing fire safety measures
+- Include specific concerns or observations
+
+**2. Use Accurate Location Information:**
+- Provide correct 5-digit ZIP code
+- Mention state if outside California
+- Include relevant geographic features (hills, canyons, forests)
+
+**3. Ask Specific Questions:**
+- "What are the top 3 fire risks for my property?"
+- "What DIY improvements can I make this weekend?"
+- "Do I need professional help for any of these issues?"
+- "What's the priority order for addressing these risks?"
+
+### Managing Your Sessions
+
+**1. Authentication:**
+- Authenticate once per conversation
+- Keep verification codes handy (save in notes app)
+- Log out when finished for security
+
+**2. Multiple Analyses:**
+- You can analyze multiple properties in one session
+- Each analysis gets a unique assessment ID
+- Email reports are sent separately for each property
+
+---
+
+## 🆘 Getting Help
+
+### FlameGuardAI Support
+- **Website**: [https://flameguardai.dlyog.com](https://flameguardai.dlyog.com)
+- **Email**: support@flameguardai.dlyog.com
+- **Documentation**: Visit the website for additional resources
+
+### Claude Desktop Support
+- **Help Center**: [https://support.anthropic.com](https://support.anthropic.com)
+- **MCP Documentation**: [Model Context Protocol](https://modelcontextprotocol.io)
+
+### Technical Issues
+- **MCP Remote**: [mcp-remote on npm](https://www.npmjs.com/package/mcp-remote)
+- **Node.js Help**: [nodejs.org](https://nodejs.org/en/docs/)
+
+---
+
+## ⚡ Quick Start Checklist
+
+- [ ] Claude Desktop installed and updated
+- [ ] Node.js installed (`node --version` works)
+- [ ] FlameGuardAI account created and verified
+- [ ] Configuration file updated with FlameGuardAI MCP server
+- [ ] Claude Desktop restarted
+- [ ] 🔨 Tools icon visible in Claude Desktop
+- [ ] Authentication completed with email verification
+- [ ] First fire risk analysis test completed
+
+---
+
+## 🔮 What's Next?
+
+Once you have FlameGuardAI integrated with Claude Desktop, you can:
+
+- **Regular Property Assessments**: Schedule periodic fire risk evaluations
+- **Seasonal Reviews**: Check fire safety before high-risk seasons
+- **Home Improvement Planning**: Use recommendations to plan fire safety upgrades
+- **Insurance Preparation**: Generate detailed reports for insurance reviews
+- **Community Education**: Share fire safety knowledge with neighbors
+
+---
+
+**🏠 Ready to protect your property? Start your fire risk analysis today!**
+
+*This integration brings professional-grade fire risk assessment directly to your Claude Desktop conversations. Stay safe, stay protected with FlameGuardAI.*
+
