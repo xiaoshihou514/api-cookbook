@@ -4,13 +4,16 @@ Thank you for your interest in contributing to our API Cookbook! We welcome high
 
 ## Structure
 
-This cookbook contains two main sections:
+This cookbook contains three main sections:
 
 ### 1. **Examples** (`/docs/examples/`)
 Step-by-step tutorials and example implementations that teach specific concepts or solve common use cases.
 
 ### 2. **Showcase** (`/docs/showcase/`)
 Community-built projects that demonstrate real-world applications of the Sonar API.
+
+### 3. **Articles** (`/docs/articles/`)
+In-depth integration guides and advanced implementation tutorials for complex use cases and integrations with other tools.
 
 ## Contributing Guidelines
 
@@ -91,6 +94,15 @@ Any known limitations or considerations users should be aware of.
 4. Include screenshots or demos if applicable
 5. Submit a pull request
 
+### For Articles
+
+1. Fork this repository
+2. Create a new directory under `/docs/articles/your-article-name/`
+3. Add your `README.mdx` file following the structure above
+4. Focus on advanced implementations, integrations, or complex patterns
+5. Include comprehensive code examples and explanations
+6. Submit a pull request
+
 ## Pull Request Template
 
 When submitting a PR, please use this template:
@@ -102,6 +114,7 @@ Brief description of your contribution
 ## Type of Contribution
 - [ ] Example Tutorial
 - [ ] Showcase Project
+- [ ] Article/Integration Guide
 
 ## Checklist
 - [ ] My code follows the cookbook's style guidelines
