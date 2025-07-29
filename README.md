@@ -12,3 +12,12 @@ Example code and guides for accomplishing common tasks with the [Perplexity Sona
 
 
 For more information, check our [docs](https://docs.perplexity.ai).
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit examples and showcase projects.
+
+### Quick Links
+- [Submit an Example Tutorial](CONTRIBUTING.md#for-examples)
+- [Submit a Showcase Project](CONTRIBUTING.md#for-showcase-projects)
+- [View Contribution Guidelines](CONTRIBUTING.md)
