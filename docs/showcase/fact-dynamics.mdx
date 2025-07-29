@@ -1,0 +1,179 @@
+---
+title: Fact Dynamics
+description: A Flutter app for real-time fact-checking of debate, speech and images uses Perplexity's Sonar API.
+sidebar_position: 2
+keywords: [Sonar API, Flutter, Dart, fact‑checking, hackathon, real-time, speech-to-text, image-verification]
+---
+
+# Fact Dynamics
+
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/icon/icon.png"
+    alt="Fact Dynamics logo"
+    width="80"
+    height="80"
+    style="border-radius: 14px;"
+  />
+</p>
+
+Fact Dynamics is a cross‑platform Flutter application that leverages Perplexity's Sonar API to provide real‑time fact‑checking for spoken and visual content—perfect for debates, presentations, or on‑the‑fly image verification. Built as a Perplexity Hackathon submission in the Information Tools & Deep Research & Education categories.
+
+## Features
+
+- **Real‑time Speech Analysis** - Transcribes live audio (via `speech_to_text`) and fact‑checks each snippet instantly
+- **Image Fact Verification** - Extracts text from images and verifies claims on‑device
+- **Claim Rating System** - Classifies claims as **TRUE**, **FALSE**, **MISLEADING**, or **UNVERIFIABLE**
+- **Source Citations** - Surfaces authoritative URLs backing each verdict
+- **User Authentication** - Firebase Auth (Google & Email) with secure Firestore persistence
+- **Debate Mode** - Continuous speech recognition with streaming feedback
+- **Cross‑platform** - iOS, Android, Web (macOS testing; Windows coming soon)
+
+## Prerequisites
+
+- Flutter SDK installed on your development machine
+- Firebase account for authentication and data persistence
+- Perplexity Sonar API key
+- Device with microphone access for speech recognition
+- Camera access for image capture (optional)
+
+## Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/vishnu32510/fact_pulse.git
+   cd fact_pulse
+   ```
+
+2. **Install Flutter dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Firebase for your platform**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication (Google, Email) and Firestore Database
+   - Install and configure FlutterFire CLI:
+     ```bash
+     dart pub global activate flutterfire_cli
+     flutterfire configure
+     ```
+   - Follow the prompts to select your Firebase project and platforms (iOS/Android/Web)
+
+4. **Set up API key**
+   - Create a `.env` file in the project root (use `.env.template` as reference)
+   - Add your Perplexity Sonar API key:
+     ```
+     PERPLEXITY_API_KEY=your_api_key_here
+     ```
+
+5. **Configure platform permissions**
+   - For Android: Microphone and camera permissions are configured in `android/app/src/main/AndroidManifest.xml`
+   - For iOS: Permissions are configured in `ios/Runner/Info.plist`
+
+6. **Run the application**
+   ```bash
+   flutter run
+   ```
+
+## Usage
+
+### Demo & Screenshots
+
+- [Watch the demo video](https://youtu.be/92IoX19Djtc)  
+- [Web Demo](https://fact-pulse.web.app/)
+
+<table>
+  <tr>
+    <td>
+      <img
+        src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/screenshots/1.%20Login.png"
+        alt="Login screen"
+        width="200"
+      />
+    </td>
+    <td>
+      <img
+        src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/screenshots/2.%20Dashboard.png"
+        alt="Dashboard"
+        width="200"
+      />
+    </td>
+    <td>
+      <img
+        src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/screenshots/5.%20Profile.png"
+        alt="Profile screen"
+        width="200"
+      />
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>
+      <img
+        src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/screenshots/3.%20Facts%20Checked%20List(Speech,%20Debate,%20Image).png"
+        alt="Facts checked list"
+        width="300"
+      />
+    </td>
+    <td>
+      <img
+        src="https://raw.githubusercontent.com/vishnu32510/fact_pulse/main/assets/screenshots/4.%20Fact%20Checks(Speech,%20Debate,%20Image).png"
+        alt="Fact checks screen"
+        width="300"
+      />
+    </td>
+  </tr>
+</table>
+
+1. **Authentication**: Sign in with Google or email through Firebase Auth
+2. **Speech Mode**: Tap the microphone to start real-time speech transcription and fact-checking
+3. **Image Mode**: Upload an image or provide a URL to extract and verify text claims
+4. **Debate Mode**: Enable continuous speech recognition for live debate fact-checking
+5. **View Results**: Check claim ratings, explanations, and source citations
+
+## Code Explanation
+
+### Perplexity Sonar API Integration
+
+The app integrates with Perplexity's Sonar API in two main ways:
+
+1. **Debate Fact‑Checking**  
+   - Stream 5‑second audio chunks → transcribe → send `textSnippet` to Sonar  
+   - Parse JSON response for `{ claim, rating, explanation, sources }`
+
+2. **Image Analysis**  
+   - Upload or URL‑point to image → Sonar extracts on‑image text → verify each claim
+
+```dart
+final client = PerplexityClient(apiKey: env.SONAR_API_KEY);
+final response = await client.analyzeClaim(textSnippet);
+print('Rating: ${response.rating}, Confidence: ${response.confidence}');
+```
+
+The app processes audio in real-time, transcribes it using Flutter's speech-to-text package, and sends each snippet to the Sonar API for immediate fact verification with source citations.
+
+### Custom SDKs Used
+
+This project uses custom-built Perplexity API SDKs developed specifically for this hackathon:
+- **perplexity_dart** - Core Dart SDK ([pub.dev](https://pub.dev/packages/perplexity_dart), [docs](perplexity-flutter))
+- **perplexity_flutter** - Flutter widgets and utilities ([pub.dev](https://pub.dev/packages/perplexity_flutter), [docs](perplexity-flutter))
+
+## Links
+
+- [GitHub Repository](https://github.com/vishnu32510/fact_pulse)
+- [Live Demo](https://fact-pulse.web.app/)
+- [Devpost Submission](https://devpost.com/software/fact-dynamics)
+- [Demo Video](https://youtu.be/92IoX19Djtc)
+
+## Limitations
+
+- Speech recognition accuracy depends on audio quality and background noise
+- Fact-checking is limited to claims that can be verified through available online sources
+- Image text extraction quality varies based on image resolution and text clarity
+- Real-time processing may experience latency depending on network connectivity
+- Cross-platform compatibility is still being tested for macOS and Windows
+- API rate limits may affect continuous usage in high-volume scenarios
+- Android microphone access permissions need to be added for long duration listening
