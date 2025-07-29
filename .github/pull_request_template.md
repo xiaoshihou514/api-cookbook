@@ -4,6 +4,7 @@ Brief description of your contribution
 ## Type of Contribution
 - [ ] Example Tutorial
 - [ ] Showcase Project
+- [ ] Article/Integration Guide
 - [ ] Documentation Update
 - [ ] Bug Fix
 - [ ] Other (please describe)
