@@ -8,7 +8,7 @@ on:
       - '.github/workflows/**'
 
 jobs:
-  validate-mdx:
+  mdx-validation:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
