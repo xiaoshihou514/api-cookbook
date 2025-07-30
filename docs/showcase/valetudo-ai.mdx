@@ -1,0 +1,203 @@
+---
+title: Valetudo AI — Trusted Medical Answer Assistant  
+description: Perplexity Sonar-powered medical assistant that delivers science-backed answers with verified citations — featuring prompt templates, filters, and image upload.  
+sidebar_position: 1  
+keywords: [medical, AI assistant, Perplexity Sonar, healthcare, citations, trusted sources, image upload, prompt templates, health bot]  
+---  
+  
+# Project Title  
+  
+**Valetudo AI** is a Perplexity Sonar-powered assistant that delivers fast, reliable, and well-cited answers to medical questions. Designed for parents, patients, and students — it cuts through misinformation with smart filters, visual input, and prompt-based queries.  
+  
+## Features  
+  
+- **Answers with Citations:** Provides numbered scientific citations from a curated list of **10** trusted medical **sources**.  
+- **Advanced Filtering:** Allows users to filter results **by date and country** to get the most relevant information.  
+- **Image Upload:** Supports visual context for queries (e.g., **photos** of medications or conditions).  
+- **Prompt Templates:** Includes **7 categories** of pre-built prompts for common medical questions:  
+  - Symptom-based advice  
+  - Drug interaction checks  
+  - Safety timing  
+  - Safer treatments  
+  - Compare effectiveness  
+  - Recommended exercises  
+  - Latest research  
+- **Clean & Simple UI:** Built with React and Tailwind CSS for a **user-friendly** experience.  
+  
+## Prerequisites  
+  
+Before installing and running Valetudo AI locally, ensure you have the following installed:  
+  
+- **Node.js** (tested with v22.15.0) and **npm** – for running the frontend (React + Vite)  
+- **Python** (tested with v3.13.4) and **pip** – for the Flask backend  
+- **Git** – to clone the repository  
+- A valid **Perplexity API key** – required to query the Sonar API ([how to generate one](https://docs.perplexity.ai/getting-started/quickstart))  
+- (Optional) **Virtual environment support** (e.g., `venv`) – for isolating Python dependencies  
+- (Optional) A modern web browser (e.g., Chrome) – to access the app
+  
+## Installation  
+  
+### 1. Clone the repo  
+  
+```bash  
+git clone https://github.com/vero-code/valetudo-ai.git
+cd valetudo-ai
+```  
+  
+### 2. Set environment variables  
+  
+Create a `.env` file inside the `/backend` folder with the following content:  
+  
+`PERPLEXITY_API_KEY=your_api_key_here`  
+  
+> Refer to `/backend/.env.example` for guidance. 
+> Never commit your `.env` file to version control.  
+  
+### 3. Start the frontend  
+  
+```bash  
+npm install
+npm run dev
+```  
+  
+### 4. Start the backend  
+  
+```bash  
+cd backend
+python -m venv venv
+
+# Activate virtual environment  
+# On Windows:  
+venv\Scripts\activate  
+  
+# On macOS/Linux:  
+source venv/bin/activate
+
+pip install -r requirements.txt
+python app.py
+```  
+  
+The app will be available at [http://localhost:5173](http://localhost:5173)  
+  
+## Usage  
+  
+Here are some ways to use Valetudo AI effectively:  
+  
+### 1. Ask a health question  
+  
+- Type a question like:  
+  _"What to do if a 5-year-old has a fever?"_  
+- Click **"Ask AI"**  
+- Expand the full answer  
+- Hover over citation numbers to preview and copy links  
+  
+### 2. Use filters  
+  
+- Click **"Show advanced options"**  
+- Set a custom **date range**  
+- Choose a **country** to localize results  
+  
+### 3. Upload an image  
+  
+- Drag and drop or manually upload a photo (e.g., medication or condition)  
+- Ask: _"What is this medication?"_  
+- The AI will use image context in its response  
+  
+### 4. Try prompt templates  
+  
+- Click **"Try Prompts"**  
+- Select one of **7 categories**  
+- Fill in the fields and generate a ready-to-send query  
+- Use the **follow-up input** to refine or expand the conversation  
+  
+## Code Explanation  
+  
+### Perplexity API Integration  
+  
+Valetudo AI leverages the Sonar API to its full potential. The core Q&A functionality is powered by [Perplexity Sonar Pro API](https://docs.perplexity.ai).  
+  
+| Feature               | API Field                          | Usage                                                                  |  
+|-----------------------|------------------------------------|------------------------------------------------------------------------|  
+| Search Context Size   | `search_context_size: medium`      | Balances depth and speed of the response for concise medical answers.  |  
+| Domain Filtering      | `search_domain_filter`             | Limits answers to a curated list of trusted medical domains.           |  
+| Image Upload          | `image_url`                        | Enables visual-based questions like identifying medications or rashes. |  
+| Date Filtering        | `search_after/before_date_filter`  | Allows users to narrow results by recency — useful for evolving topics.|  
+| User Location Filter  | `user_location`                    | Prioritizes sources or context relevant to the user's country.         |  
+  
+> These parameters enable precise control over search quality, scope, and context — especially useful in the medical domain.  
+  
+### Project Structure  
+  
+```  
+valetudo-ai/  
+  
+├── backend/         # Flask backend API  
+├── public/          # Static files  
+├── screenshots/     # UI Images  
+├── src/  
+│ ├── assets/        # Media resources  
+│ ├── components/    # React components  
+│ ├── constants/     # Mock data and templates  
+│ ├── hooks/         # Custom React hooks  
+│ ├── utils/         # Helper functions  
+│ ├── App.jsx        # Routes  
+│ ├── index.css      # Styles  
+│ └── main.jsx       # App entry point  
+├── index.html       # Main HTML file  
+├── LICENSE          # License file  
+├── package.json     # Dependencies  
+├── README.md        # Documentation  
+└── vite.config.js   # Vite config  
+```  
+  
+### Key Components  
+  
+-   `HeroSection` — main landing interface with input, filters, and image upload  
+-   `AskPage` — prompt-driven question builder with follow-up form  
+-   `QuickAnswerBox` — renders Sonar response with Markdown and citation links  
+  
+### Security  
+  
+- No user data is stored or tracked  
+- API key is managed securely via `.env`  
+  
+## Links  
+  
+- [GitHub Repository](https://github.com/vero-code/valetudo-ai)  
+- [Devpost Submission](https://devpost.com/software/valetudo-ai)  
+  
+## Limitations  
+  
+- Valetudo AI is **not a medical tool** — for informational purposes only.  
+- **Response time** may vary depending on filters or image upload size.  
+- **Mobile layout** is simplified; optimized for desktop use.  
+- **Disclaimer**: Always consult a doctor for any clinical decisions. 
+  
+## Demo Video  
+  
+Curious how Valetudo AI works in action?  
+Watch a short walkthrough here:  
+  
+[![Watch the demo](https://img.youtube.com/vi/AX3nOh9LbTc/0.jpg)](https://www.youtube.com/watch?v=AX3nOh9LbTc)  
+  
+## Screenshots  
+  
+### Home Interface  
+  
+<img src="https://github.com/vero-code/valetudo-ai/blob/master/screenshots/1-home.png" alt="Home screen" width="800" />  
+  
+### Prompt Templates  
+  
+<img src="https://github.com/vero-code/valetudo-ai/blob/master/screenshots/10-prompts.png" alt="Prompt templates" width="800" />  
+  
+### Image Upload  
+  
+<img src="https://github.com/vero-code/valetudo-ai/blob/master/screenshots/8-image-upload.png" alt="Image upload" width="800" />  
+  
+### Date & Location Filters  
+  
+<img src="https://github.com/vero-code/valetudo-ai/blob/master/screenshots/7-date-filter.png" alt="Date filter" width="800" />
+
+<img src="https://github.com/vero-code/valetudo-ai/blob/master/screenshots/9-location-filter.png" alt="Location filter" width="800" />
+ 
+> View more screenshots in the [GitHub screenshots folder](https://github.com/vero-code/valetudo-ai/tree/master/screenshots)
