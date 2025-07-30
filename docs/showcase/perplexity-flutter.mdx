@@ -1,0 +1,196 @@
+---
+title: Perplexity Dart & Flutter SDKs
+description: Lightweight, type-safe SDKs for seamless Perplexity API integration in Dart and Flutter applications
+sidebar_position: 3
+keywords: [Perplexity, Flutter, Dart, SDK, API, streaming, chat-completions, sonar, type-safe, widgets]
+---
+
+# Perplexity Dart & Flutter SDKs
+
+Comprehensive toolkit for integrating Perplexity's AI capabilities into Dart and Flutter applications. Includes a lightweight core API client (`perplexity_dart`) and Flutter widgets (`perplexity_flutter`) with BLoC state management.
+
+## Features
+
+- **Type-safe API Client** - Fully typed models with compile-time safety
+- **Streaming & Non-streaming** - Real-time chat completions with streaming support
+- **All Perplexity Models** - Sonar, Sonar Pro, Deep Research, Reasoning variants
+- **Multi-Image Processing** - Single or multiple images (base64, data URI, HTTPS URLs)
+- **Flutter Widgets** - Ready-to-use chat UI components with BLoC integration
+- **Advanced Configuration** - Temperature, top-p, search filters, domain restrictions
+- **Cross-platform** - iOS, Android, Web, Desktop support
+- **Future-proof** - Custom model string support for new Perplexity releases
+
+## Prerequisites
+
+- Dart SDK 2.17.0+ 
+- Flutter SDK 3.0.0+ (for Flutter features)
+- [Perplexity API Key](https://www.perplexity.ai/settings/api)
+
+## Installation
+
+```bash
+# For Dart projects
+dart pub add perplexity_dart
+
+# For Flutter projects  
+flutter pub add perplexity_flutter
+```
+
+## Usage
+
+### Flutter Widgets (Quick Start)
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:perplexity_flutter/perplexity_flutter.dart';
+
+void main() => runApp(MaterialApp(
+  home: ChatWrapperWidget(
+    apiKey: 'your-api-key',
+    model: PerplexityModel.sonarPro,
+    child: Scaffold(
+      appBar: AppBar(title: Text('AI Chat')),
+      body: Column(children: [
+        Expanded(child: PerplexityChatView()),
+        PerplexityChatInput(),
+      ]),
+    ),
+  ),
+));
+```
+
+### Core API Client
+
+```dart
+import 'package:perplexity_dart/perplexity_dart.dart';
+
+final client = PerplexityClient(apiKey: 'your-api-key');
+
+// Simple chat
+final response = await client.sendMessage(
+  requestModel: ChatRequestModel(
+    model: PerplexityModel.sonarPro,
+    messages: [
+      StandardMessageModel(role: MessageRole.user, content: 'Hello AI'),
+    ],
+  ),
+);
+print('Response: ${response.content}');
+
+// Streaming
+final stream = client.streamChat(requestModel: ChatRequestModel(
+  model: PerplexityModel.sonar,
+  messages: messages,
+  stream: true,
+));
+
+await for (final chunk in stream) {
+  print('Chunk: $chunk');
+}
+```
+
+### Image Analysis
+
+```dart
+// Single image
+final request = ChatRequestModel.defaultImageRequest(
+  urlList: ['https://example.com/image.jpg'],
+  imagePrompt: 'Describe this image',
+  model: PerplexityModel.sonarPro,
+);
+
+// Multiple images
+final multiRequest = ChatRequestModel.defaultImageRequest(
+  urlList: [
+    'https://example.com/photo1.jpg',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgA...'
+  ],
+  imagePrompt: 'Compare these images',
+);
+
+final response = await client.sendMessage(requestModel: request);
+```
+
+### Advanced Configuration
+
+```dart
+final requestModel = ChatRequestModel(
+  model: PerplexityModel.sonar,
+  messages: messages,
+  temperature: 0.7,                    // Creativity (0.0-2.0)
+  topP: 0.9,                          // Nucleus sampling
+  searchDomainFilter: ['nature.com'], // Limit sources
+  returnRelatedQuestions: true,       // Follow-up suggestions
+  searchRecencyFilter: 'month',       // Time filter
+  maxTokens: 1000,
+);
+```
+
+## Code Explanation
+
+### Architecture
+
+**Two-layer design:**
+1. **Core (`perplexity_dart`)** - Pure Dart API client
+2. **UI (`perplexity_flutter`)** - Flutter widgets + BLoC state management
+
+### Multimodal Processing
+
+Uses flexible message parts for combining text and images:
+
+```dart
+final message = ImageMessageModel(
+  role: MessageRole.user,
+  content: [
+    TextPart(text: 'Analyze these images'),
+    ImagePart(url: 'https://example.com/image1.jpg'),
+    ImagePart(url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgA...'),
+  ],
+);
+```
+
+### Available Models
+
+```dart
+PerplexityModel.sonar              // 128K tokens - Fast queries
+PerplexityModel.sonarPro           // 200K tokens - Enhanced  
+PerplexityModel.sonarDeepResearch  // 128K tokens - Research
+PerplexityModel.sonarReasoning     // 128K tokens - Complex reasoning
+PerplexityModel.sonarReasoningPro  // 128K tokens - Advanced reasoning
+```
+
+### Error Handling
+
+```dart
+try {
+  final response = await client.sendMessage(requestModel: request);
+} on PerplexityException catch (e) {
+  print('API Error: ${e.message} (${e.statusCode})');
+} catch (e) {
+  print('Error: $e');
+}
+```
+
+## Links
+
+**Packages:**
+- [perplexity_dart on pub.dev](https://pub.dev/packages/perplexity_dart) | [GitHub](https://github.com/vishnu32510/perplexity_dart)
+- [perplexity_flutter on pub.dev](https://pub.dev/packages/perplexity_flutter) | [GitHub](https://github.com/vishnu32510/perplexity_flutter)
+
+**Resources:**
+- [Flutter Examples](https://github.com/vishnu32510/perplexity_dart/tree/main/example_flutter_app)
+- [Dart Examples](https://github.com/vishnu32510/perplexity_dart/tree/main/example)
+- [Perplexity API Docs](https://docs.perplexity.ai/)
+
+**Contributing:** Issues and PRs welcome on both [perplexity_dart](https://github.com/vishnu32510/perplexity_dart/issues) and [perplexity_flutter](https://github.com/vishnu32510/perplexity_flutter/issues) repositories.
+
+## Limitations
+
+- **API Rate Limits** - Implement rate limiting for production use
+- **Image Formats** - Base64, data URI, HTTPS URLs supported; local files need conversion  
+- **Context Windows** - 128K-200K token limits per model
+- **API Key Security** - Store securely; avoid hardcoding in client apps
+- **Streaming Dependencies** - Requires WebSocket support on target platforms
+- **Flutter Web** - Limited file operations in web environments
+
+**Production Tips:** Implement API key rotation, retry logic, caching strategies, usage monitoring, and proper error boundaries.
