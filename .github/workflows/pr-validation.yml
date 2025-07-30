@@ -21,27 +21,10 @@ jobs:
           cache: 'npm'
           
       - name: MDX validation dependencies
-        run: npm install --save-dev @mdx-js/mdx @mdx-js/loader
+        run: npm install --save-dev @mdx-js/mdx @mdx-js/loader glob
         
       - name: Validate MDX files
-        run: |
-          # Find and validate all MDX files in the docs directory
-          find docs -name "*.mdx" -type f | while read file; do
-            echo "Validating: $file"
-            node -e "
-              const fs = require('fs');
-              const { compile } = require('@mdx-js/mdx');
-              
-              try {
-                const content = fs.readFileSync('$file', 'utf8');
-                compile(content, { jsx: true });
-                console.log('✅ $file - Valid MDX');
-              } catch (error) {
-                console.error('❌ $file - MDX Error:', error.message);
-                process.exit(1);
-              }
-            "
-          done
+        run: node scripts/validate-mdx.js
           
       - name: Check for broken links
         run: |
