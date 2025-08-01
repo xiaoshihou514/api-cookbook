@@ -1,272 +1,63 @@
 ---
 title: CityPulse - AI-Powered Geospatial Discovery Search
 description: Real-time local discovery search using Perplexity AI for personalized location insights and recommendations
-sidebar_position: 1
-keywords: [perplexity, geospatial, location, real-time, maps, local-discovery, sonar, fasthtml]
+sidebar_position: 2
+keywords: [perplexity, geospatial, location, real-time, maps, local-discovery, sonar]
 ---
 
 # CityPulse - AI-Powered Geospatial Discovery
 
 ![CityPulse Main Interface](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-1.jpg)
 
-CityPulse is an intelligent location-based discovery app that helps users explore what's happening around them right now. Built with Perplexity AI's Sonar models, it provides personalized, real-time insights about local events, restaurants, alerts, and activities with geographic context and citation tracking.
+CityPulse is an intelligent location-based discovery search that helps users explore what's happening around them right now. It demonstrates how to create personalized, real-time local insights using Perplexity's Sonar models.
 
-## Demo Video
+[![Demo Video](https://cdn.loom.com/sessions/thumbnails/6507fa27571442e680edf787b0f0690d-2fa2c36169822631-full-play.gif)](https://youtu.be/Y0UIhh3diJg)
 
-[![CityPulse Demo Video](https://cdn.loom.com/sessions/thumbnails/6507fa27571442e680edf787b0f0690d-2fa2c36169822631-full-play.gif)](https://youtu.be/Y0UIhh3diJg)
+## What CityPulse Does
 
-## Features
+- **Real-time local discovery** - Find current events, restaurants, and local alerts near any location
+- **AI-powered search suggestions** - Get intelligent search recommendations as you type
+- **Personalized insights** - Receive AI-generated advice on what to try, best times to visit, and pro tips
+- **Interactive mapping** - Explore results on an interactive map with custom markers and detailed popups
 
-- **Real-time location discovery** using Perplexity's Sonar models for current information
-- **Interactive map interface** with custom markers and auto-zoom functionality  
-- **AI-powered search suggestions** with natural language query processing
-- **Structured data extraction** with JSON schema validation and citation tracking
-- **Personalized insights** using Sonar Reasoning for location recommendations
-- **Geographic context awareness** for coordinate-based search queries
+![Search Interface](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-2.jpg)
 
-## Prerequisites
+## How It Uses Perplexity Sonar
 
-- Python 3.11+
-- Perplexity API key
-- Google Maps API key
-- Basic knowledge of FastHTML framework
+CityPulse leverages two key Perplexity models:
 
-## Installation
-
-1. **Clone and setup environment**
-```bash
-git clone <repository-url>
-cd citypulse
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-2. **Configure API keys**
-```env
-# .env file
-PERPLEXITY_API_KEY=your_perplexity_api_key_here
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
-```
-
-3. **Run the application**
-```bash
-python3 main.py
-```
-
-## Usage
-
-### Basic Local Discovery
+**Sonar for Real-Time Data**
 ```python
-# Get nearby events, restaurants, and alerts
-api.geo_structured_output_with_citations(
-    prompt=f"Find current events, restaurants, and local alerts near coordinates {lat}, {lng}",
-    schema=LOCAL_INFO_SCHEMA
+# Get current local information with geographic context
+response = client.chat.completions.create(
+    model="sonar",
+    messages=[{
+        "role": "user", 
+        "content": f"Find current events, restaurants, and alerts near {lat}, {lng}"
+    }],
+    response_format={"type": "json_schema", "json_schema": {"schema": LOCAL_INFO_SCHEMA}}
 )
 ```
 
-![Search Interface](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-4.jpg)
-
-### AI-Powered Search Suggestions
+**Sonar Reasoning for Personalized Insights**
 ```python
-# Generate contextual search suggestions
-api.get_search_suggestions(
-    query="coffee",
-    location="San Francisco, CA"
+# Generate AI-powered location recommendations
+response = client.chat.completions.create(
+    model="sonar-reasoning",
+    messages=[{
+        "role": "user",
+        "content": f"Provide personalized insights for {location_name}: what to try, best times to visit, pro tips"
+    }]
 )
 ```
 
-![Location Details Modal](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-2.jpg)
+The app uses structured JSON schemas to ensure consistent data formatting and includes citation tracking for source verification.
 
-### Personalized Location Insights
-```python
-# Get AI reasoning for specific locations
-api.get_location_insights(
-    location_name="Blue Bottle Coffee",
-    location_type="restaurant",
-    description="Specialty coffee roaster",
-    address="315 Linden St, Oakland, CA"
-)
-```
-
-![AI-Powered Insights](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-3.jpg)
-
-## Code Explanation
-
-### Perplexity API Integration
-```python
-class PerplexityAPI:
-    def __init__(self, api_key: Optional[str] = None):
-        """Initialize the Perplexity API client."""
-        self.api_key = api_key or os.environ.get("PERPLEXITY_API_KEY")
-        if not self.api_key:
-            raise ValueError("API key is required. Set PERPLEXITY_API_KEY environment variable or pass it directly.")
-        self.base_url = "https://api.perplexity.ai/chat/completions"
-        self.headers = {"Authorization": f"Bearer {self.api_key}"}
-    
-    def geo_structured_output_with_citations(self, 
-                     prompt: str, 
-                     schema: Dict[str, Any],
-                     model: str = "sonar") -> Dict:
-        """Get a structured JSON response with detailed citations."""
-        payload = {
-            "model": model,
-            "messages": [
-                {"role": "system", "content": 
-                """
-                You are an expert on current events and a real-time local discovery app for city exploration.
-
-                We're building an app that helps people discover what's happening right around them, whether they're tourists or locals. The key features would be:
-
-                1. Live local events (concerts, meetups, pop-ups happening now)
-                2. Contextual business info (what's open, busy, or recommended nearby)
-                3. Real-time alerts (weather, traffic, safety updates)
-                4. Smart recommendations based on location and time
-                
-                Find current information near coordinates:
-                
-                1. EVENTS: Live events happening today/this week (concerts, festivals, sports, etc.)
-                2. RESTAURANTS: Popular local restaurants and cafes currently open
-                3. ALERTS: Any weather, traffic, or safety alerts for the area
-                
-                For each item:
-                - Generate a unique ID (like "event_001", "restaurant_001", "alert_001")
-                - Include specific addresses and approximate coordinates if possible
-                - Include official website URLs when available
-                - Provide citation information ONLY if it's from a different source than the official website
-                - For every category, try to include at least 5 items
-                
-                Return as JSON with events, restaurants, and alerts arrays.
-                
-                IMPORTANT: For each item, include:
-                - id: unique identifier
-                - website: official website URL if available (leave empty if not available)
-                - citation: object with url, title, and description ONLY if different from official website (leave empty if not available or same as website)
-                """
-                },
-                {"role": "user", "content": prompt}
-            ],
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": {"schema": schema}
-            },
-            "return_citations": True,
-            "return_images": False
-        }
-        
-        response = requests.post(self.base_url, headers=self.headers, json=payload).json()
-    
-        # Return both content and citations
-        result = {
-            "content": response["choices"][0]["message"]["content"],
-            "citations": response.get("citations", [])
-        }
-        
-        return result
-```
-
-### JSON Schema for Structured Output
-```python
-LOCAL_INFO_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "events": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {"type": "string"},
-                    "name": {"type": "string"},
-                    "type": {"type": "string"},
-                    "address": {"type": "string"},
-                    "date": {"type": "string"},
-                    "time": {"type": "string"},
-                    "description": {"type": "string"},
-                    "latitude": {"type": "number"},
-                    "longitude": {"type": "number"},
-                    "website": {"type": "string"},
-                    "citation": {
-                        "type": "object",
-                        "properties": {
-                            "url": {"type": "string"},
-                            "title": {"type": "string"},
-                            "description": {"type": "string"}
-                        }
-                    }
-                },
-                "required": ["id", "name", "type", "description"]
-            }
-        },
-        "restaurants": {
-            "type": "array", 
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {"type": "string"},
-                    "name": {"type": "string"},
-                    "address": {"type": "string"},
-                    "cuisine": {"type": "string"},
-                    "description": {"type": "string"},
-                    "date": {"type": "string"},
-                    "time": {"type": "string"},
-                    "latitude": {"type": "number"},
-                    "longitude": {"type": "number"},
-                    "website": {"type": "string"},
-                    "citation": {
-                        "type": "object",
-                        "properties": {
-                            "url": {"type": "string"},
-                            "title": {"type": "string"},
-                            "description": {"type": "string"}
-                        }
-                    }
-                },
-                "required": ["id", "name", "description"]
-            }
-        },
-        "alerts": {
-            "type": "array",
-            "items": {
-                "type": "object", 
-                "properties": {
-                    "id": {"type": "string"},
-                    "title": {"type": "string"},
-                    "description": {"type": "string"},
-                    "severity": {"type": "string"},
-                    "date": {"type": "string"},
-                    "time": {"type": "string"},
-                    "latitude": {"type": "number"},
-                    "longitude": {"type": "number"},
-                    "website": {"type": "string"},
-                    "citation": {
-                        "type": "object",
-                        "properties": {
-                            "url": {"type": "string"},
-                            "title": {"type": "string"},
-                            "description": {"type": "string"}
-                        }
-                    }
-                },
-                "required": ["id", "title", "description"]
-            }
-        }
-    },
-    "required": ["events", "restaurants", "alerts"]
-}
-```
+![AI Insights](https://raw.githubusercontent.com/anevsky/CityPulse/main/assets/CityPulse-GeoSearch-App-3.jpg)
 
 ## Links
 
 - [GitHub Repository](https://github.com/anevsky/CityPulse)
 - [Live Demo](https://citypulse-ppx.uc.r.appspot.com/)
 - [Video Demo](https://youtu.be/Y0UIhh3diJg)
-- [Perplexity API Documentation](https://docs.perplexity.ai)
 - **[Built with ❤️ by Alex Nevsky](https://alexnevsky.com)**
-
-## Limitations
-
-- **API Rate Limits**: Perplexity API has usage limits depending on your plan
-- **Real-time Data Accuracy**: Information freshness depends on available sources
-- **Geographic Coverage**: Results quality varies by location and data availability
-- **Citation Reliability**: Always verify critical information from provided sources
-- **Mobile Performance**: Large datasets may impact performance on slower devices
