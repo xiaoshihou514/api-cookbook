@@ -1,0 +1,48 @@
+name: MDX Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/**'
+
+jobs:
+  mdx-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: MDX validation dependencies
+        run: npm install --save-dev @mdx-js/mdx @mdx-js/loader glob
+        
+      - name: Validate MDX files
+        run: node scripts/validate-mdx.js
+          
+      - name: Check for broken links
+        run: |
+          # Simple check for common broken link patterns
+          echo "Checking for potential broken links..."
+          if grep -r "http://localhost\|http://127.0.0.1" docs/; then
+            echo "❌ Found localhost links that should be removed"
+            exit 1
+          fi
+          echo "✅ No obvious broken links found"
+          
+      - name: Validate frontmatter
+        run: |
+          # Check that all MDX files have required frontmatter
+          find docs -name "*.mdx" -type f | while read file; do
+            if ! head -n 10 "$file" | grep -q "^---$"; then
+              echo "❌ $file - Missing frontmatter (no --- markers)"
+              exit 1
+            fi
+            echo "✅ $file - Has frontmatter"
+          done 
