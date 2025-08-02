@@ -1,96 +1,35 @@
 ---
-title: PerplexiGrid
+title: PerplexiGrid | Interactive Analytics Dashboards
 description: Instantly generate analytics dashboards from natural language using live data via Perplexity Sonar API.
-sidebar_position: 1
+sidebar_position: 5
 keywords: [perplexigrid, dashboard, analytics, BI, AI, Perplexity, sonar, echarts, supabase]
 ---
-
-# PerplexiGrid
 
 **PerplexiGrid** turns natural language into rich, interactive dashboards. Connect your data and mix it with live web data, ask a question, and let the Sonar API do the rest! Complete with drag-and-drop layout, AI widget generation, and ECharts-powered visualizations.
 
 ## Features
 
-* Fully customizable dashboards generated from plain English prompts with 25+ supported widget types (charts, KPIs, tables, heatmaps, etc.)
-* Smart layout with a customizable drag-and-drop grid, shareable as PDF/image exports and shareable links  
-* Refine or add widgets using conversational updates  
-* Support for live data from the web + your own datasources
+* **Natural Language to Dashboards**: Convert plain English prompts into fully functional analytics dashboards with 25+ widget types
+* **Live Data Integration**: Blend your own data sources with real-time web data for comprehensive insights
+* **Interactive Grid Layout**: Drag-and-drop interface for customizing dashboard layouts and styling
+* **AI-Powered Refinement**: Refine or add widgets using conversational updates
+* **Export & Share**: Generate PDF exports, high-res images, and shareable dashboard links
 
-## Prerequisites
+## How it uses Sonar
 
-* Node.js 18 or newer  
-* Supabase project + API keys  
-* Perplexity Sonar API key  
-* Supabase CLI for deploying Edge Functions  
+PerplexiGrid leverages the Sonar API through four specialized modes:
 
-## Installation
+* **Full Dashboard Generation (f1)**: Creates comprehensive dashboards with multiple widgets using Sonar-pro's advanced capabilities
+* **Lightweight Mode (l1)**: Generates quick visualizations for embedded systems and real-time applications
+* **Dashboard Updates (r1)**: Enables dynamic modifications through natural language while maintaining context
+* **Widget Refinement (r2)**: Provides precise control over individual widget updates
 
-Clone the repository:
-
-```
-git clone https://github.com/PetarRan/perplexigrid.git
-cd perplexigrid 
-```
-
-Install frontend dependencies:
-
-```
-cd client
-npm install
-```
-
-Create your `.env` file inside `client/`:
-
-```
-VITE_SUPABASE_URL=https://your-project.supabase.co  
-VITE_SUPABASE_ANON_KEY=your-anon-key  
-VITE_PPLX_API_KEY=your-perplexity-api-key  
-```
-
-Run the development server:
-
-```
-npm run dev
-```
-
-Open `http://localhost:5173` in your browser.
-
-## Supabase Edge Function Setup
-
-Install the Supabase CLI:  
-https://supabase.com/docs/guides/cli
-
-Link to your project:
-
-```
-supabase link --project-ref your-project-id
-```
-
-Create the Edge Function:
-
-```
-supabase functions new call-perplexity
-```
-
-Paste your implementation into:  
-`functions/call-perplexity/index.ts`
-
-Set the environment variable (via Supabase Dashboard):
-
-`PPLX_API_KEY=your-perplexity-api-key  `
-
-Deploy the function:
-
-```
-supabase functions deploy call-perplexity
-```
-
-Your frontend calls it at: `/call-perplexity`
+The system uses structured JSON schema responses to ensure consistent, ECharts-compatible output that can be directly rendered as interactive visualizations.
 
 ## Usage
 
 1. Open the app and start a new dashboard  
-2. Prompt it like: _“Show me market trends in AI startups in 2024”_  (Sonar generates chart configs, which are parsed and rendered as live widgets)
+2. Prompt it like: _"Show me market trends in AI startups in 2024"_  (Sonar generates chart configs, which are parsed and rendered as live widgets)
 
 ![Prompt #1](https://www.perplexigrid.com/guide/prompt_dark.gif)
 
@@ -108,14 +47,13 @@ Your frontend calls it at: `/call-perplexity`
 
 ![Prompt #5](https://www.perplexigrid.com/guide/invite_dark.gif)
 
-
 ## Code Explanation
 
 The user sends messages that are turned into prompts to a Supabase Edge Function that wraps the Perplexity Sonar API.  
 Depending on the mode (`f1`, `l1`, `r1`, or `r2`), the function generates full structured outputs for dashboards, lightweight visualizations, or targeted updates.  
 The generated layout is parsed into structured widget definitions and passed through our widget creation engine.
 
-Explore our [mai sonar-api service here.](https://github.com/PetarRan/perplexigrid/blob/main/server/supabase/functions/_shared/perplexityService.ts)
+Explore our [main sonar-api service here.](https://github.com/PetarRan/perplexigrid/blob/main/server/supabase/functions/_shared/perplexityService.ts)
 
 ## Prompt Modes
 
@@ -124,17 +62,17 @@ Explore our [mai sonar-api service here.](https://github.com/PetarRan/perplexigr
 | `f1` | First-time full dashboard generation | User starts with an empty canvas and enters an initial prompt | Produces a complete dashboard layout with multiple widgets |
 | `l1` | Lightweight dashboard generation | Used for quick insights or previews with minimal tokens | Faster and cheaper, but returns fewer widgets with less instruction depth |
 | `r1` | Full dashboard regeneration | User wants to replace all existing widgets with a new prompt | Rebuilds the entire dashboard while keeping layout intact |
-| `r2` | Targeted widget update | User wants to change a specific widget (e.g. “make this a pie chart”) | Only the selected widget is modified based on the new instruction |
+| `r2` | Targeted widget update | User wants to change a specific widget (e.g. "make this a pie chart") | Only the selected widget is modified based on the new instruction |
 
-Tech Stack
+## Tech Stack
 
-* **Frontend**: React + Vite (TypeScript), ECharts, react-grid-layout  
-* **Backend**: Supabase Edge Functions (TypeScript on Deno)  
-* **Infra**: Supabase (PostgreSQL, RLS, Auth), CLI-based deploys + Vercel
-* **AI Model**: Perplexity Sonar-Pro
+* **Frontend**: React + Vite (TypeScript), ECharts, react-grid-layout
+* **Backend**: Supabase Edge Functions (TypeScript on Deno)
+* **AI Engine**: Perplexity Sonar-Pro
+* **Infrastructure**: Supabase (PostgreSQL, RLS, Auth), Vercel deployment
 
 ## Links
 
 - [GitHub Repository](https://github.com/PetarRan/perplexigrid)
-- [perplexigrid.com](https://www.perplexigrid.com)
 - [Live Demo](https://app.perplexigrid.com)
+- [Website](https://www.perplexigrid.com)
