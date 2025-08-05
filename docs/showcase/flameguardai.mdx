@@ -5,14 +5,6 @@ sidebar_position: 2
 keywords: [FlameGuardAI, MCP, External Fire ,AI Home Safety, Home Inspection]
 ---
 
-## 🔥 Inspiration
-
-The devastating LA wildfires were more than a tragic event — they were a turning point. While watching homes burn to the ground, I saw a story about one house that miraculously survived. That story stuck with me.
-
-What protected that home? It wasn't luck. It was planning — fire-resistant materials, defensible space, and design choices made long before disaster struck. This realization — combined with the rising difficulty of securing home insurance — inspired us to build **FlameGuard AI™**.
-
-We wanted to create a tool that empowers **homeowners** to take fire risk prevention into their own hands — not just react after it's too late.
-
 ## 🧠 What it does
 
 **FlameGuard AI™** helps homeowners, buyers, and property professionals detect and act on **external fire vulnerabilities** like wildfires or neighboring structure fires. It's more than a scan — it's a personalized research assistant for your home.
@@ -70,36 +62,6 @@ FlameGuard AI™ is powered by a modern GenAI stack and built to scale:
 - **Database**: PostgreSQL (local) with **Azure SQL-ready** schema
 - **AI Integration**: OpenAI Vision API + Perplexity Sonar API
 - **Cloud-ready**: Built for **Azure App Service** with Dockerized deployment
-
-## 🚀 MCP Integration - FlameGuardAI MCP Server
-
-Transform Claude Desktop into a powerful fire risk assessment tool by connecting it to FlameGuardAI's remote MCP (Model Context Protocol) server. This integration allows you to analyze properties for fire risks, get detailed prevention recommendations, and access professional resources - all through natural conversation with Claude.
-
-### Connect FlameGuardAI to Claude Desktop
-
-Add to your Claude Desktop configuration:
-
-```json
-{
-  "mcpServers": {
-    "flameguard-ai": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://mcp-flameguardai.dlyog.com/sse"
-      ]
-    }
-  }
-}
-```
-
-With FlameGuardAI MCP integration, Claude can:
-
-- **🏠 Analyze Property Fire Risks**: Describe your property and get comprehensive fire risk assessments
-- **📋 Generate Prevention Recommendations**: Receive detailed DIY solutions and professional guidance
-- **🛒 Find Local Resources**: Get information about material suppliers and professional services in your area
-- **📊 Create Assessment Reports**: Generate detailed reports with actionable fire prevention strategies
-- **🔍 Research Fire Safety**: Access specialized fire prevention research powered by Perplexity AI
 
 ## 🏆 Accomplishments that we're proud of
 
