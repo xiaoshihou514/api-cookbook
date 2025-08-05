@@ -1,53 +1,42 @@
 ---
-title: CycleSyncAI: Personalized Health Plans Powered by Sonar API
-description: iOS app that delivers personalized diet and workout recommendations for women, powered by Apple HealthKit and Perplexity’s Sonar Pro API.
+title: CycleSyncAI | Personalized Health Plans Powered by Sonar API
+description: iOS app that delivers personalized diet and workout recommendations for women, powered by Apple HealthKit and Perplexity's Sonar Pro API.
 sidebar_position: 7
 keywords: [CycleSyncAI, Sonar API, Perplexity, HealthKit, iOS, menstrual cycle, fitness, nutrition, LLM, AI, wellness, personalized, app]
 ---
 
-# CycleSyncAI: Personalized Health Plans Powered by Sonar API
-
-## 🚀 Overview
-
-**CycleSyncAI** is an iOS app designed to provide personalized **diet and workout recommendations** tailored to a woman’s **menstrual cycle phase**.
+**CycleSyncAI** is an iOS app designed to provide personalized **diet and workout recommendations** tailored to a woman's **menstrual cycle phase**.
 
 By integrating menstrual data from Apple **HealthKit** and optional user profile inputs (age, weight, height, medical conditions, dietary restrictions, goals, and preferences), the app generates dynamic, phase-aware suggestions to support holistic wellness.
 
-Unlike static wellness tools, **CycleSyncAI** leverages **Perplexity’s Sonar Pro API** to deliver **expert-informed**, LLM-generated guidance — including a daily grocery list and motivational feedback — customized to the user's cycle and lifestyle.
+Unlike static wellness tools, **CycleSyncAI** leverages **Perplexity's Sonar Pro API** to deliver **expert-informed**, LLM-generated guidance — including a daily grocery list and motivational feedback — customized to the user's cycle and lifestyle.
 
----
-
-## 🧠 Problem & Solution
+## Problem & Solution
 
 > **Why it matters:**  
-Most apps overlook the hormonal changes that affect women’s fitness and nutrition needs across their cycle, leaving users with generic advice.
+Most apps overlook the hormonal changes that affect women's fitness and nutrition needs across their cycle, leaving users with generic advice.
 
-**CycleSyncAI** bridges this gap by combining Apple HealthKit data with Sonar Pro’s LLM to generate **adaptive, cycle-aware recommendations** for better health outcomes.
+**CycleSyncAI** bridges this gap by combining Apple HealthKit data with Sonar Pro's LLM to generate **adaptive, cycle-aware recommendations** for better health outcomes.
 
----
+## Features
 
-## ✨ Features
+* **Personalized diet & workout suggestions** per cycle phase
+* Syncs with Apple HealthKit for real-time cycle tracking
+* User profile inputs for advanced personalization (age, goals, restrictions, etc.)
+* **Auto-generated daily grocery list**
+* Smooth, modern UI with gradients and subtle animations
+* **Motivational AI feedback** tailored to user preferences
+* Local data storage and private processing
 
-- ✅ **Personalized diet & workout suggestions** per cycle phase
-- 🔄 Syncs with Apple HealthKit for real-time cycle tracking
-- 👤 User profile inputs for advanced personalization (age, goals, restrictions, etc.)
-- 🛒 **Auto-generated daily grocery list**
-- 🎨 Smooth, modern UI with gradients and subtle animations
-- 💬 **Motivational AI feedback** tailored to user preferences
-- 🔒 Local data storage and private processing
+## Motivation
 
----
+> "I wanted a tailored regime for myself and couldn't find it all in one place."
 
-## 💡 Motivation
+**CycleSyncAI** was born from the need for a science-backed, easy-to-use app that adapts wellness guidance to women's natural hormonal rhythms, something missing in most mainstream fitness and nutrition platforms.
 
-> “I wanted a tailored regime for myself and couldn’t find it all in one place.”
+## Repository Structure
 
-**CycleSyncAI** was born from the need for a science-backed, easy-to-use app that adapts wellness guidance to women’s natural hormonal rhythms, something missing in most mainstream fitness and nutrition platforms.
-
----
-
-## 🛠️ Repository Structure
-
+```
 CycleSyncAI.xcodeproj          → Xcode project file  
 CycleSyncAI/                   → Source code  
 ├── EatPlanViewController.swift        → Diet plan generation & display  
@@ -59,10 +48,9 @@ CycleSyncAI/                   → Source code
 Main.storyboard               → App UI & layout  
 Assets.xcassets              → Images & app icons  
 Info.plist                   → Permissions & configurations  
+```
 
----
-
-## 🔧 Setup Instructions
+## Setup Instructions
 
 1. Clone the repo  
 2. Open in **Xcode**  
@@ -70,48 +58,40 @@ Info.plist                   → Permissions & configurations
 4. Insert your **Sonar Pro API key**  
 5. Run the app on a physical device (recommended)
 
----
-
-## 🧬 Sonar API Usage
+## Sonar API Usage
 
 The app sends structured prompts to the **Sonar Pro API** including:
 
-- Cycle phase (from HealthKit)
-- User profile info (age, weight, goals, etc.)
-- Meal preferences & restrictions
+* Cycle phase (from HealthKit)
+* User profile info (age, weight, goals, etc.)
+* Meal preferences & restrictions
 
 In return, it receives:
 
-- ✅ **Personalized diet plan**
-- ✅ **Custom workout plan**
-- ✅ **Daily grocery list**
-- ✅ **Motivational feedback**
+* **Personalized diet plan**
+* **Custom workout plan**
+* **Daily grocery list**
+* **Motivational feedback**
 
 These are parsed and rendered as styled HTML inside the app using WebViews.
 
----
-
-## 🎥 Demo Video
+## Demo Video
 
 Watch the full app walkthrough here: https://www.youtube.com/watch?v=R558uRLNvUM&t=2s.
 
 > *Note: The LLM takes ~30–60 seconds per request. This wait time was trimmed in the video for brevity.*
 
----
-
-## ✅ Impact
+## Impact
 
 **CycleSyncAI** empowers women to make informed, body-aware decisions in daily life. The app supports better:
 
-- Energy management  
-- Fitness results  
-- Mental well-being  
-- Motivation and confidence
+* Energy management  
+* Fitness results  
+* Mental well-being  
+* Motivation and confidence
 
 It also reduces decision fatigue with automatically prepared grocery lists and uplifting guidance.
 
----
+## Links
 
-## 🔗 Links
-
-- [GitHub Repository](https://github.com/medhini98/cyclesyncai-api-cookbook)
+* [GitHub Repository](https://github.com/medhini98/cyclesyncai-api-cookbook)
