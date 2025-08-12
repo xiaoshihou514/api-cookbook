@@ -44,6 +44,7 @@ Before using Monday, ensure you have:
 
 ## Installation
 
+```bash
 # Clone the repository
 git clone https://github.com/srivastavanik/monday.git
 cd monday
@@ -58,12 +59,11 @@ PERPLEXITY_API_KEY=your_api_key
 ELEVENLABS_API_KEY=your_api_key
 YOUTUBE_API_KEY=your_api_key
 
-#Start Backend Server (Terminal 1)
+# Start Backend Server (Terminal 1)
 node backend-server.js
 
 # Start frontend
 npm run dev
-
 
 ## Usage
 
@@ -79,32 +79,10 @@ npm run dev
    - Interactive 3D models (when relevant)
 
 ## Code Explanation
-Voice Capture (Frontend)
-ts
-CopyEdit
-// Captures finalized speech recognition results and forwards them to the command processor.
-this.recognition.onresult = (event: SpeechRecognitionEvent) => {
-  let finalTranscript = ''
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    if (event.results[i].isFinal) {
-      finalTranscript += event.results[i][0].transcript
-    }
-  }
-  if (finalTranscript) {
-    console.log('VoiceController: 🎤 Final transcript:', finalTranscript)
-    this.currentTranscript = finalTranscript
-    this.onTranscriptChange?.(finalTranscript)
-    // Send directly to command processor—no filtering here
-    this.commandProcessor.queueCommand(finalTranscript, Date.now())
-  }
-}
 
-Description.
- The client’s VoiceSystemController uses the Web Speech API to continuously listen for speech. In the onresult handler above, any finalized recognition result is captured as finalTranscript and immediately forwarded to the command-processing system via queueCommand. This converts spoken input into text and injects it into the pipeline without local filtering, delegating interpretation to the command processor.
+# Voice Command Processing & Activation (Frontend)
 
-Voice Command Processing & Activation (Frontend)
-ts
-CopyEdit
+```ts
 private async processCommand(event: CommandEvent): Promise<void> {
   const normalizedTranscript = event.transcript.toLowerCase().trim()
   const isActivation = normalizedTranscript.includes('hey monday')
@@ -139,13 +117,11 @@ private async processCommand(event: CommandEvent): Promise<void> {
 
   event.processed = true
 }
+Description:
+The CommandProcessor manages voice-command routing and conversation context on the client. It checks whether the transcript contains the wake phrase (“hey monday”) or an ongoing conversation is active. Only then is the user’s command treated as actionable. On activation, it may start a new conversation session, timestamp the interaction, and dispatch the raw transcript to the backend (sendToBackend). Inputs outside an active session without the trigger phrase are ignored.
 
-Description.
- The CommandProcessor manages voice-command routing and conversation context on the client. It checks whether the transcript contains the wake phrase (“hey monday”) or an ongoing conversation is active. Only then is the user’s command treated as actionable. On activation, it may start a new conversation session, timestamp the interaction, and dispatch the raw transcript to the backend (sendToBackend). Inputs outside an active session without the trigger phrase are ignored.
+#Backend Voice Command Handler (Socket.IO Server)
 
-Backend Voice Command Handler (Socket.IO Server)
-ts
-CopyEdit
 socket.on('voice_command', async (data: any) => {
   logger.info('Voice command received', { socketId: socket.id, command: data.command?.substring(0, 50) })
 
@@ -225,13 +201,13 @@ socket.on('voice_command', async (data: any) => {
     // ... (spatial and focus commands omitted for brevity)
   }
 })
+# Description
+The server receives voice_command events and parses them to infer intent (e.g., greeting, basic Q&A, reasoning, deep research). For each type, it invokes the Perplexity service with the corresponding mode and the user’s query. The resulting answer—including content, citations, and, where applicable, a reasoning chain or research sources—is emitted back to the client as a monday_response with a type aligned to the mode.
 
-Description.
- The server receives voice_command events and parses them to infer intent (e.g., greeting, basic Q&A, reasoning, deep research). For each type, it invokes the Perplexity service with the corresponding mode and the user’s query. The resulting answer—including content, citations, and, where applicable, a reasoning chain or research sources—is emitted back to the client as a monday_response with a type aligned to the mode.
-
-AI Query Processing (Perplexity Service Integration)
+#AI Query Processing (Perplexity Service Integration)
 ts
-CopyEdit
+Copy
+Edit
 const result = await this.makeRequest('/chat/completions', requestData)
 return {
   id: result.id || 'reasoning_query',
@@ -244,13 +220,14 @@ return {
     responseTime: 0
   }
 }
+Description
+PerplexityService prepares a mode-specific request and calls the external API. It returns a structured result containing the main answer (content), any citations, and—when in reasoning mode—a parsed list of reasoning steps. Using the Sonar API, it also includes metadata such as token usage and the model identifier.
 
-Description.
- PerplexityService prepares a mode-specific request and calls the external API. It returns a structured result containing the main answer (content), any citations, and—when in reasoning mode—a parsed list of reasoning steps. Using the Sonar API, It also includes metadata such as token usage and the model identifier.
 
-Reasoning Workflow — Extracting Step-by-Step Logic
+#Reasoning Workflow — Extracting Step-by-Step Logic
 ts
-CopyEdit
+Copy
+Edit
 private extractReasoningSteps(content: string): ReasoningStep[] {
   const steps: ReasoningStep[] = []
   const lines = content.split('\n')
@@ -271,13 +248,13 @@ private extractReasoningSteps(content: string): ReasoningStep[] {
   }
   return steps
 }
+Description
+In reasoning mode, answers are expected to include an ordered thought process. This utility scans the text for step indicators (e.g., “Step 1:” or “1.”), producing a structured array of steps with content and an initial confidence score. This enables the client to render reasoning as a clear, enumerated sequence.
 
-Description.
- In reasoning mode, answers are expected to include an ordered thought process. This utility scans the text for step indicators (e.g., “Step 1:” or “1.”), producing a structured array of steps with content and an initial confidence score. This enables the client to render reasoning as a clear, enumerated sequence.
-
-VR Spatial Response Visualization
+#VR Spatial Response Visualization
 ts
-CopyEdit
+Copy
+Edit
 function createSpatialPanels(response: any, mode: string, query: string): any[] {
   const panels: any[] = []
 
@@ -333,50 +310,9 @@ function createSpatialPanels(response: any, mode: string, query: string): any[] 
   return panels
 }
 
-Description.
- To bridge AI output into a 3D presentation, the backend constructs spatial panel objects. A main content panel is centered; optional citations and reasoning panels are positioned to the sides. Each panel has an ID, type, position/rotation, title, content, and opacity. These definitions are sent with the response so the client can render floating informational boards in VR.
+Description
+To bridge AI output into a 3D presentation, the backend constructs spatial panel objects. A main content panel is centered; optional citations and reasoning panels are positioned to the sides. Each panel has an ID, type, position/rotation, title, content, and opacity. These definitions are sent with the response so the client can render floating informational boards in VR.
 
-Spatial Orchestration & Layout (Frontend VR)
-ts
-CopyEdit
-useFrame(() => {
-  // Continuously rotate the entire group of panels slowly
-  if (groupRef.current) {
-    groupRef.current.rotation.y += 0.001
-  }
-
-  // Dynamic layout based on mode
-  panels.forEach((panel, index) => {
-    if (spatialLayout === 'focus' && panel.id !== activePanel) {
-      // In focus mode, push non-active panels far outward
-      const distance = 5
-      const angle = (index / panels.length) * Math.PI * 2
-      panel.position[0] = Math.cos(angle) * distance
-      panel.position[2] = Math.sin(angle) * distance
-
-    } else if (spatialLayout === 'research') {
-      // In research mode, distribute panels in a layered circle (knowledge constellation)
-      const radius = 3
-      const layer = Math.floor(index / 6)
-      const angleStep = (Math.PI * 2) / Math.min(6, panels.length - layer * 6)
-      const angle = (index % 6) * angleStep
-      panel.position[0] = Math.cos(angle) * (radius + layer * 1.5)
-      panel.position[1] = 1.6 + layer * 0.5
-      panel.position[2] = Math.sin(angle) * (radius + layer * 1.5)
-
-    } else {
-      // Default layout: semi-circle in front of the user
-      const angle = (index / Math.max(panels.length - 1, 1)) * Math.PI - Math.PI / 2
-      const radius = 2.5
-      panel.position[0] = Math.cos(angle) * radius
-      panel.position[1] = 1.6 + Math.sin(index * 0.5) * 0.3
-      panel.position[2] = Math.sin(angle) * radius * 0.5 - 1
-    }
-  })
-})
-
-Description.
- SpatialOrchestrator renders panels in VR and animates placement per the current layout. Default mode arranges panels in a semi-circle ahead of the user. Focus mode pushes non-active panels outward to minimize distraction. Research mode distributes panels into layered circular constellations to accommodate more nodes. The layout logic runs every frame for smooth transitions.
 ## Links
 
 - [GitHub Repository](https://github.com/srivastavanik/monday/tree/final)
