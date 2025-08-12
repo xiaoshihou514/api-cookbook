@@ -20,7 +20,7 @@ Our mission: make learning adaptive, inclusive, and hands-free—whether you’r
 - **Voice-first interaction** for hands-free learning.
 - **Real-time 3D visualizations** of concepts using Three.js & WebXR.
 - **Curated educational Youtube video integration** from trusted sources.
-- **Smart Search Algorithm that extracts keywords from AI response content using NLP and filters results for educational, embeddable content.
+- **Smart Search Algorithm** that extracts keywords from AI response content using NLP and filters results for educational, embeddable content.
 - **Multi-modal feedback** combining text, speech (via ElevenLabs), and spatial panels.
 - **VR-optional** design for immersive experiences without requiring a headset.
 - **Accessibility-focused interface** for mobility- and vision-impaired users.
@@ -28,10 +28,10 @@ Our mission: make learning adaptive, inclusive, and hands-free—whether you’r
 ## Example Flow:
 
 User: "Hey Monday, think about photosynthesis"
-AI Response: "Photosynthesis involves chlorophyll, sunlight, and carbon dioxide..."
-Keywords Extracted: ["photosynthesis", "chlorophyll", "sunlight"]
-YouTube Query: "photosynthesis chlorophyll sunlight explained tutorial analysis"
-Result: 3 relevant educational videos about photosynthesis
+- AI Response: "Photosynthesis involves chlorophyll, sunlight, and carbon dioxide..."
+- Keywords Extracted: ["photosynthesis", "chlorophyll", "sunlight"]
+- YouTube Query: "photosynthesis chlorophyll sunlight explained tutorial analysis"
+- Result: 3 relevant educational videos about photosynthesis
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ PERPLEXITY_API_KEY=your_api_key
 ELEVENLABS_API_KEY=your_api_key
 YOUTUBE_API_KEY=your_api_key
 
-# Start Backend Server (Terminal 1)
+# Start Backend Server
 node backend-server.js
 
 # Start frontend
@@ -81,7 +81,7 @@ npm run dev
 
 ## Code Explanation
 
-# Voice Command Processing & Activation (Frontend)
+## Voice Command Processing & Activation (Frontend)
 
 ```ts
 private async processCommand(event: CommandEvent): Promise<void> {
@@ -118,11 +118,12 @@ private async processCommand(event: CommandEvent): Promise<void> {
 
   event.processed = true
 }
-Description:
+```
+**Description**:
 The CommandProcessor manages voice-command routing and conversation context on the client. It checks whether the transcript contains the wake phrase (“hey monday”) or an ongoing conversation is active. Only then is the user’s command treated as actionable. On activation, it may start a new conversation session, timestamp the interaction, and dispatch the raw transcript to the backend (sendToBackend). Inputs outside an active session without the trigger phrase are ignored.
 
-#Backend Voice Command Handler (Socket.IO Server)
-
+## Backend Voice Command Handler (Socket.IO Server)
+```ts
 socket.on('voice_command', async (data: any) => {
   logger.info('Voice command received', { socketId: socket.id, command: data.command?.substring(0, 50) })
 
@@ -202,11 +203,12 @@ socket.on('voice_command', async (data: any) => {
     // ... (spatial and focus commands omitted for brevity)
   }
 })
-# Description
-The server receives voice_command events and parses them to infer intent (e.g., greeting, basic Q&A, reasoning, deep research). For each type, it invokes the Perplexity service with the corresponding mode and the user’s query. The resulting answer—including content, citations, and, where applicable, a reasoning chain or research sources—is emitted back to the client as a monday_response with a type aligned to the mode.
 
-#AI Query Processing (Perplexity Service Integration)
-ts
+```
+**Description**:  The server receives voice_command events and parses them to infer intent (e.g., greeting, basic Q&A, reasoning, deep research). For each type, it invokes the Perplexity service with the corresponding mode and the user’s query. The resulting answer—including content, citations, and, where applicable, a reasoning chain or research sources—is emitted back to the client as a monday_response with a type aligned to the mode.
+
+## AI Query Processing (Perplexity Service Integration)
+```ts
 Copy
 Edit
 const result = await this.makeRequest('/chat/completions', requestData)
@@ -221,12 +223,12 @@ return {
     responseTime: 0
   }
 }
-Description
-PerplexityService prepares a mode-specific request and calls the external API. It returns a structured result containing the main answer (content), any citations, and—when in reasoning mode—a parsed list of reasoning steps. Using the Sonar API, it also includes metadata such as token usage and the model identifier.
+```
+**Description**: PerplexityService prepares a mode-specific request and calls the external API. It returns a structured result containing the main answer (content), any citations, and—when in reasoning mode—a parsed list of reasoning steps. Using the Sonar API, it also includes metadata such as token usage and the model identifier.
 
 
-#Reasoning Workflow — Extracting Step-by-Step Logic
-ts
+## Reasoning Workflow — Extracting Step-by-Step Logic
+```ts
 Copy
 Edit
 private extractReasoningSteps(content: string): ReasoningStep[] {
@@ -249,11 +251,11 @@ private extractReasoningSteps(content: string): ReasoningStep[] {
   }
   return steps
 }
-Description
-In reasoning mode, answers are expected to include an ordered thought process. This utility scans the text for step indicators (e.g., “Step 1:” or “1.”), producing a structured array of steps with content and an initial confidence score. This enables the client to render reasoning as a clear, enumerated sequence.
+```
+**Description:** In reasoning mode, answers are expected to include an ordered thought process. This utility scans the text for step indicators (e.g., “Step 1:” or “1.”), producing a structured array of steps with content and an initial confidence score. This enables the client to render reasoning as a clear, enumerated sequence.
 
-#VR Spatial Response Visualization
-ts
+## VR Spatial Response Visualization
+```ts
 Copy
 Edit
 function createSpatialPanels(response: any, mode: string, query: string): any[] {
@@ -310,9 +312,9 @@ function createSpatialPanels(response: any, mode: string, query: string): any[] 
 
   return panels
 }
+```
 
-Description
-To bridge AI output into a 3D presentation, the backend constructs spatial panel objects. A main content panel is centered; optional citations and reasoning panels are positioned to the sides. Each panel has an ID, type, position/rotation, title, content, and opacity. These definitions are sent with the response so the client can render floating informational boards in VR.
+**Description**: To bridge AI output into a 3D presentation, the backend constructs spatial panel objects. A main content panel is centered; optional citations and reasoning panels are positioned to the sides. Each panel has an ID, type, position/rotation, title, content, and opacity. These definitions are sent with the response so the client can render floating informational boards in VR.
 
 ## Links
 
