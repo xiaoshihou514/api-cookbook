@@ -26,7 +26,7 @@ Fact Dynamics is a cross-platform Flutter app that provides real-time fact-check
 * Real-time speech transcription and fact-checking during live conversations
 * Image text extraction and claim verification with source citations
 * Claim rating system (TRUE, FALSE, MISLEADING, UNVERIFIABLE) with explanations
-* Source Citations** - Provides authoritative URLs backing each verdict
+* Source citations - Provides authoritative URLs backing each verdict
 
 * Debate mode with continuous speech recognition and streaming feedback
 * User authentication via Firebase (Google, Email) with persistent chat history
@@ -50,12 +50,12 @@ flutter pub get
 
 ## Usage
 
-**Real-time Speech Fact-Checking:**
+### Real-time Speech Fact-Checking
 - Streams 5-second audio chunks through Flutter's `speech_to_text`
 - Sends transcribed snippets to Sonar API with structured prompts
 - Returns JSON with claims, ratings (TRUE/FALSE/MISLEADING/UNVERIFIABLE), explanations, and sources
 
-**Image Analysis:**
+### Image Analysis
 - Uploads images/URLs to Sonar API for text extraction
 - Verifies extracted claims against authoritative sources
 - Provides comprehensive analysis with source attribution
@@ -97,9 +97,19 @@ Built two reusable packages for the Flutter community:
 - **[perplexity_flutter](https://pub.dev/packages/perplexity_flutter)** - Flutter widgets and BLoC integration
 
 
+## Demo Video
+
+<iframe
+  className="w-full aspect-video rounded-xl"
+  src="https://www.youtube.com/embed/92IoX19Djtc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
 ## Links
 
 - **[GitHub Repository](https://github.com/vishnu32510/fact_pulse)** - Full source code
 - **[Live Demo](https://fact-pulse.web.app/)** - Try the web version
-- **[Demo Video](https://youtu.be/92IoX19Djtc)** - Watch it in action
 - **[Devpost Submission](https://devpost.com/software/fact-dynamics)** - Hackathon entry 
