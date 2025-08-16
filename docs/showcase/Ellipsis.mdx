@@ -1,226 +1,107 @@
-# 🎙️ Ellipsis — One Click. Infinite Conversations.
-
-<div align="center">
-<img width="513" alt="Screenshot 2025-05-28 at 1 47 50 PM" src="https://github.com/user-attachments/assets/4eae019c-0795-41e5-b693-3c7a91a86e6b" />
-</div>
-
-<br></br>
-A next-gen podcast generation agent that brings human-like, high-quality audio content to life—on *any* topic, with just **one click**.
-Whether it’s **breaking news**, **deep-dive tech explainers**, **movie reviews**, or **post-match sports breakdowns**, ellipsis crafts intelligent podcast episodes that sound like they were created by seasoned hosts in a professional studio.
-
+---
+title: Ellipsis | One-Click Podcast Generation Agent
+description: A next-gen podcast generation agent that brings human-like, high-quality audio content to life on any topic with just one click
+sidebar_position: 10
+keywords: [ellipsis, podcast, audio, generation, TTS, perplexity, multi-speaker, AI]
 ---
 
-## Introduction
+**Ellipsis** is a next-generation podcast generation agent that brings human-like, high-quality audio content to life on any topic with just one click. Whether it's breaking news, deep-dive tech explainers, movie reviews, or post-match sports breakdowns, Ellipsis crafts intelligent podcast episodes that sound like they were created by seasoned hosts in a professional studio.
 
-### 🚀 What Makes ellipsis Unique?
+## Features
 
-- **🧠 Intelligent Multi-Speaker Dialogue**  
-  Automatically generates natural, engaging conversations with multiple distinct voices and personalities.
-
-- **📚 Covers *Everything***  
-  From LLM architectures to lunar eclipses, ellipsis understands the depth and nuance of any topic.
-
-- **✅ Custom Evaluation Engine**  
-  Each episode is passed through rigorous evaluation pipelines to ensure:
-  - Factual accuracy 🧾  
-  - Legal and ethical soundness ⚖️  
-  - High conversational quality 🎧
-
----
-
-## Feature Comparison
-
-| Feature                         | Ellipsis                                           | NotebookLM                                  | NoteGPT                                             |
-|---------------------------------|----------------------------------------------------|----------------------------------------------|----------------------------------------------------|
-| 🎙️ Podcast Generation           | ✅ fully automated                                  | ✅ fully automated                            | ✅ fully automated                              |
-| 🧠 Multi-Speaker Support        | ✅ Multiple distinct voices                         | ❌ Two-speaker conversations                  | ✅ Multiple distinct voices                     |
-| 📚 Topic Versatility            | ✅ Covers news, tech, movies, sports, etc.          | ⚠️ No web search capability yet               | ⚠️ Limited to provided notebook context         |
-| ✅ Factual & Legal Evaluation   | ✅ Built-in evaluators for accuracy & legality      | ⚠️ Not Clearly specified                      | ❌ No evaluation engine                            |
-| 🎧 Audio Output Quality         | ✅ Human-like, podcast-ready audio                  | ✅ Human-like, podcast-ready audio            | ❌ Conversations at this point sound more robotic  |
-| 🛠️ Custom Input formats         | ⚠️ Currently working on Documents                   | ✅ Supports Documents, Video URLs etc         | ⚠️ Supports Documents but not other sources        |
-
-
-## Example Usecases
-
-* **Movie Reviews**
-
-
-https://github.com/user-attachments/assets/824bab23-2aa9-4443-bc87-0ccb013f86fc
-
-
-* **Sports News**
-
-
-https://github.com/user-attachments/assets/c2880157-e577-4997-b108-3771b327e2be
-
-
-
-## Tech Stack
-
-* **Backend**: Python, Flask, Redis (pub/sub), llama.cpp, Orpheus TTS
-* **Frontend**: React, Vite, Tailwind CSS, Lucide Icons
-* **Integration**: Perplexity API, Podbean MCP, Server-Sent Events (SSE)
+* **Intelligent Multi-Speaker Dialogue** with multiple distinct voices and personalities
+* **Comprehensive Topic Coverage** from LLM architectures to lunar eclipses
+* **Custom Evaluation Engine** ensuring factual accuracy, legal compliance, and conversational quality
+* **Fully Automated Podcast Generation** with human-like, podcast-ready audio output
+* **Real-time Streaming Updates** via Server-Sent Events (SSE)
+* **Podbean Integration** for direct podcast publishing
+* **Trending Topics Detection** using Perplexity API
 
 ## Prerequisites
 
 * Node.js v16+ and npm/yarn
 * Python 3.10+ and pip
 * Redis server running (default on `localhost:6380`)
-
-## Configuration
-
-* Copy this to `backend/.env` and set:
-
-  ```ini
-  REDIS_URL=redis://localhost:6379
-  PERPLEXITY_API_KEY=your_key_here
-  PODBEAN_CLIENT_ID=...
-  PODBEAN_CLIENT_SECRET=...
-  ```
-
-* Copy this to `frontend/.env` and set:
-
-  ```ini
-    # VCL: default set to localhost
-    REACT_APP_API_URL=http://127.0.0.1:5000 
-  ```
+* Perplexity API key, Podbean credentials
 
 ## Installation
 
-1. **Clone the repo**
+```bash
+# Clone the repository
+git clone https://github.com/dineshkannan010/Ellipsis.git
+cd Ellipsis
 
-   ```bash
-   git clone https://github.com/dineshkannan010/Ellipsis.git
-   cd Ellipsis
-   ```
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate    # macOS/Linux
+pip install -r requirements.txt
 
-2. **Backend setup**
+# Install native packages
+pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+pip install git+https://github.com/freddyaboulton/orpheus-cpp.git
+pip install huggingface_hub[hf_xet] hf_xet
 
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate    # macOS/Linux
-   venv\Scripts\activate     # Windows
-   pip install -r requirements.txt
-   ```
-   Install native & extra-index packages
-   Some packages aren’t available on PyPI and must be pulled from alternate indexes or GitHub:
+# Frontend setup
+cd ../frontend
+npm install
+```
 
-   ```bash
-   # llama.cpp (CPU wheel)
-    pip install llama-cpp-python \
-    --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+## Configuration
 
-   # Orpheus TTS bindings
-    pip install git+https://github.com/freddyaboulton/orpheus-cpp.git
+Create `backend/.env`:
+```ini
+REDIS_URL=redis://localhost:6379
+PERPLEXITY_API_KEY=your_key_here
+PODBEAN_CLIENT_ID=...
+PODBEAN_CLIENT_SECRET=...
+```
 
-   # HuggingFace XET backend
-    pip install huggingface_hub[hf_xet] hf_xet
-
-   ```
-
-3. **Frontend setup**
-
-   ```bash
-   cd frontend
-   npm install                # or yarn install
-   ```
+Create `frontend/.env`:
+```ini
+REACT_APP_API_URL=http://127.0.0.1:5000
+```
 
 ## Usage
 
-### Content Generation
+1. **Start Redis Server**:
+   ```bash
+   redis-server --port 6380
+   ```
 
-* Launch backend:
+2. **Launch Backend**:
+   ```bash
+   cd backend
+   python app.py
+   ```
 
-  ```bash
-  cd backend
-  python app.py
-  ```
+3. **Launch Frontend**:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
 
-* Launch Redis Server
+4. **Optional: Podbean Integration**:
+   ```bash
+   cd backend/integrations/podbean_mcp
+   pip install -e .
+   python server.py
+   python client.py server.py
+   ```
 
-  ```bash
-  redis-server --port 6380
-  ```
-* Launch frontend:
+5. **Generate Content**: Enter a topic in the homepage textbox and hit Enter. Switch to `ContentGenerationView` to see live script & audio progress.
 
-  ```bash
-  cd frontend
-  npm run dev                # or yarn dev
-  ```
+## Code Explanation
 
-  * Launch Podbean Server
-
-  ```bash
-  cd backend/integrations/podbean_mcp
-  pip install -e .
-  python server.py
-
-  ```
-  * Launch Podbean Client
-
-  ```bash
-  cd backend/integrations/podbean_mcp
-  python client.py server.py
-
-  ```
-
-* Enter a topic in the homepage textbox and hit **Enter**. Switch to the `ContentGenerationView` to see live script & audio progress.
-
-### Streaming Updates (SSE)
-
-* The frontend subscribes to `/stream` via EventSource.
-* Backend publishes events of types `status`, `script`, and `audio`.
-
-### Trending Topics
-
-* Click **Trending** in the post box.
-* Fetches `/api/trending`, which queries Perplexity with a custom prompt.
-
-### Podbean Publishing
-
-* After audio is ready, enter a prompt like `Post this podcast to Podbean`.
-* The client detects `podbean` intent and calls `/api/podbean/publish` via Beacon or `fetch`.
-
-## 🙏 Acknowledgments
-
-Huge thanks to [amurshak](mailto:amurshak@gmail.com) for creating and maintaining the Podbean MCP Server.
-
-## License
-
-[MIT © Ellipsis]((https://github.com/dineshkannan010/Ellipsis/blob/master/LICENSE.md)) 
-
-## Contact
-
-For questions or feedback, open an issue or reach out to 
-
-  <table>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/dineshkannan010">
-          <sub><b>Dinesh Kannan</b></sub>
-        </a><br />
-      </td>
-      <td align="center">
-        <a href="https://github.com/lohithsowmiyan">
-          <sub><b>Lohith Senthilkumar</b></sub>
-        </a><br />
-      </td>
-      <td align="center">
-        <a href="https://github.com/ParinitadasUX">
-          <sub><b>Parinita Das</b></sub>
-        </a><br />
-      </td>
-      <td align="center">
-        <a href="https://github.com/manideepika21">
-          <sub><b>Manideepika Myaka</b></sub>
-        </a><br />
-      </td>
-    </tr>
-  </table>
+* **Backend**: Python Flask with Redis pub/sub, llama.cpp, and Orpheus TTS for audio generation
+* **Frontend**: React with Vite, Tailwind CSS, and Server-Sent Events for real-time updates
+* **AI Integration**: Perplexity API for content generation and trending topics detection
+* **Audio Processing**: Multi-speaker TTS with distinct voice personalities
+* **Content Evaluation**: Built-in pipelines for factual accuracy and legal compliance
+* **Podcast Publishing**: Direct integration with Podbean via MCP server
 
 ## Links
 
-- **[GitHub Repository](https://github.com/dineshkannan010/Ellipsis)** - Full source code
-- **[Demo Video](https://www.youtube.com/watch?v=XUPsSuCBTFw)** - Watch it in action
-- **[Devpost Submission](https://devpost.com/software/ellipsis)** - Hackathon entry 
+- [GitHub Repository](https://github.com/dineshkannan010/Ellipsis)
+- [Demo Video](https://www.youtube.com/watch?v=XUPsSuCBTFw)
+- [Devpost Submission](https://devpost.com/software/ellipsis) 
