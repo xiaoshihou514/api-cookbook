@@ -5,42 +5,25 @@ sidebar_position: 9
 keywords: [monday, AI, VR, education, accessibility, voice-assistant, 3D-visualization, multimodal-learning, perplexity, elevenlabs]
 ---
 
-# Monday – Voice-First AI Learning Assistant
-
-**Monday** is a voice-enabled AI learning companion designed to bridge the gap between natural language queries and high-quality educational content. Inspired by Marvel’s JARVIS and FRIDAY, and educational platforms like Khan Academy and 3Blue1Brown, Monday delivers tailored responses in three modes—Basic, Reasoning, and Deep Research—while integrating immersive visualizations, curated video content, and accessibility-first design.
-
-Our mission: make learning adaptive, inclusive, and hands-free—whether you’re seeking quick facts, step-by-step reasoning, or deep academic research.
+**Monday** is a voice-enabled AI learning companion designed to bridge the gap between natural language queries and high-quality educational content. Inspired by Marvel's JARVIS and FRIDAY, Monday delivers tailored responses in three modes—Basic, Reasoning, and Deep Research—while integrating immersive visualizations, curated video content, and accessibility-first design.
 
 ## Features
 
-- **Three Learning Modes**:
-  - **Basic Mode** – Quick factual answers with citations.
-  - **Reasoning Mode** – Step-by-step logical explanations (triggered by the phrase "think about").
-  - **Deep Research Mode** – Multi-source investigations visualized as connected knowledge webs (triggered by the phrase "research into").
-- **Voice-first interaction** for hands-free learning.
-- **Real-time 3D visualizations** of concepts using Three.js & WebXR.
-- **Curated educational Youtube video integration** from trusted sources.
-- **Smart Search Algorithm** that extracts keywords from AI response content using NLP and filters results for educational, embeddable content.
-- **Multi-modal feedback** combining text, speech (via ElevenLabs), and spatial panels.
-- **VR-optional** design for immersive experiences without requiring a headset.
-- **Accessibility-focused interface** for mobility- and vision-impaired users.
-
-## Example Flow:
-
-User: "Hey Monday, think about photosynthesis"
-- AI Response: "Photosynthesis involves chlorophyll, sunlight, and carbon dioxide..."
-- Keywords Extracted: ["photosynthesis", "chlorophyll", "sunlight"]
-- YouTube Query: "photosynthesis chlorophyll sunlight explained tutorial analysis"
-- Result: 3 relevant educational videos about photosynthesis
+* **Three Learning Modes**: Basic factual answers, step-by-step reasoning, and deep research investigations
+* **Voice-first interaction** for hands-free learning with natural language processing
+* **Real-time 3D visualizations** of concepts using Three.js & WebXR
+* **Curated educational YouTube video integration** from trusted sources
+* **Multi-modal feedback** combining text, speech (via ElevenLabs), and spatial panels
+* **VR-optional design** for immersive experiences without requiring a headset
+* **Accessibility-focused interface** for mobility- and vision-impaired users
 
 ## Prerequisites
 
-Before using Monday, ensure you have:
-
-- A device with a microphone.
-- Modern web browser (Chrome, Edge, or Firefox recommended).
-- Optional: VR headset for immersive mode (WebXR compatible).
-- Internet connection for API-driven responses and 3D assets.
+* Node.js 18 LTS or newer
+* Modern web browser (Chrome, Edge, or Firefox recommended)
+* Microphone for voice interaction
+* Optional: VR headset for immersive mode (WebXR compatible)
+* Perplexity API key, ElevenLabs API key, and YouTube API key
 
 ## Installation
 
@@ -68,253 +51,22 @@ npm run dev
 
 ## Usage
 
-1. Launch the app in your browser.
-2. Say **"Hey Monday"** to activate the assistant.
+1. Launch the app in your browser
+2. Say **"Hey Monday"** to activate the assistant
 3. Ask a question in one of three modes:
-   - **Basic Mode** – “What is photosynthesis?”
-   - **Reasoning Mode** – “Think about how blockchain works.”
-   - **Deep Research Mode** – “Research into the history of quantum mechanics.”
-4. View answers as:
-   - Floating text panels.
-   - Voice responses.
-   - Interactive 3D models (when relevant)
+   - **Basic Mode** – "What is photosynthesis?"
+   - **Reasoning Mode** – "Think about how blockchain works."
+   - **Deep Research Mode** – "Research into the history of quantum mechanics."
+4. View answers as floating text panels, voice responses, and interactive 3D models
 
 ## Code Explanation
 
-## Voice Command Processing & Activation (Frontend)
-
-```ts
-private async processCommand(event: CommandEvent): Promise<void> {
-  const normalizedTranscript = event.transcript.toLowerCase().trim()
-  const isActivation = normalizedTranscript.includes('hey monday')
-  const isWithinConversation = this.isConversationActive()
-
-  console.log(`🔍 CommandProcessor: Evaluating command: "${event.transcript}"`, {
-    isActivation,
-    isWithinConversation,
-    conversationActive: this.conversationContext.active,
-    timeSinceLastCommand: this.conversationContext.lastCommandTime ? 
-      Date.now() - this.conversationContext.lastCommandTime : 'N/A'
-  })
-
-  if (isActivation || isWithinConversation) {
-    console.log(`✅ CommandProcessor: Processing command: "${event.transcript}"`)
-
-    // Update context
-    if (isActivation && !this.conversationContext.active) {
-      this.startConversation()
-    }
-    this.conversationContext.lastCommandTime = event.timestamp
-    this.conversationContext.commandCount++
-
-    // Send to backend
-    await this.sendToBackend(event.transcript, isActivation)
-
-    // Notify UI listeners
-    this.notifyListeners()
-  } else {
-    console.log(`🚫 CommandProcessor: Ignoring non-conversation command: "${event.transcript}"`)
-  }
-
-  event.processed = true
-}
-```
-**Description**:
-The CommandProcessor manages voice-command routing and conversation context on the client. It checks whether the transcript contains the wake phrase (“hey monday”) or an ongoing conversation is active. Only then is the user’s command treated as actionable. On activation, it may start a new conversation session, timestamp the interaction, and dispatch the raw transcript to the backend (sendToBackend). Inputs outside an active session without the trigger phrase are ignored.
-
-## Backend Voice Command Handler (Socket.IO Server)
-```ts
-socket.on('voice_command', async (data: any) => {
-  logger.info('Voice command received', { socketId: socket.id, command: data.command?.substring(0, 50) })
-
-  const command = parseCommand(data.command || '')
-  if (!command) {
-    socket.emit('monday_response', {
-      type: 'error',
-      content: 'Please start your command with "Monday"',
-      timestamp: Date.now()
-    })
-    return
-  }
-
-  // Handle different command types
-  switch (command.type) {
-    case 'greeting':
-      socket.emit('monday_response', {
-        type: 'greeting',
-        content: "Hello! I'm Monday, your AI learning companion. ... What would you like to learn about today?",
-        timestamp: Date.now()
-      })
-      break
-
-    case 'basic':
-      if (command.content) {
-        const response = await perplexityService.processQuery({
-          query: command.content,
-          mode: 'basic',
-          sessionId: data.sessionId
-        })
-        socket.emit('monday_response', {
-          type: 'basic_response',
-          content: response.content,
-          citations: response.citations,
-          metadata: response.metadata,
-          timestamp: Date.now()
-        })
-      }
-      break
-
-    case 'reasoning':
-      if (command.content) {
-        const response = await perplexityService.processQuery({
-          query: command.content,
-          mode: 'reasoning',
-          sessionId: data.sessionId
-        })
-        socket.emit('monday_response', {
-          type: 'reasoning_response',
-          content: response.content,
-          reasoning: response.reasoning,
-          citations: response.citations,
-          metadata: response.metadata,
-          timestamp: Date.now()
-        })
-      }
-      break
-
-    case 'deepResearch':
-      if (command.content) {
-        const response = await perplexityService.processQuery({
-          query: command.content,
-          mode: 'research',
-          sessionId: data.sessionId
-        })
-        socket.emit('monday_response', {
-          type: 'research_response',
-          content: response.content,
-          sources: response.sources,
-          citations: response.citations,
-          metadata: response.metadata,
-          timestamp: Date.now()
-        })
-      }
-      break
-
-    // ... (spatial and focus commands omitted for brevity)
-  }
-})
-
-```
-**Description**:  The server receives voice_command events and parses them to infer intent (e.g., greeting, basic Q&A, reasoning, deep research). For each type, it invokes the Perplexity service with the corresponding mode and the user’s query. The resulting answer—including content, citations, and, where applicable, a reasoning chain or research sources—is emitted back to the client as a monday_response with a type aligned to the mode.
-
-## AI Query Processing (Perplexity Service Integration)
-```ts
-Copy
-Edit
-const result = await this.makeRequest('/chat/completions', requestData)
-return {
-  id: result.id || 'reasoning_query',
-  model: result.model || 'sonar-reasoning',
-  content: result.choices?.[0]?.message?.content || 'No response generated',
-  citations: this.extractCitations(result),
-  reasoning: this.extractReasoningSteps(result.choices?.[0]?.message?.content || ''),
-  metadata: {
-    tokensUsed: result.usage?.total_tokens || 0,
-    responseTime: 0
-  }
-}
-```
-**Description**: PerplexityService prepares a mode-specific request and calls the external API. It returns a structured result containing the main answer (content), any citations, and—when in reasoning mode—a parsed list of reasoning steps. Using the Sonar API, it also includes metadata such as token usage and the model identifier.
-
-
-## Reasoning Workflow — Extracting Step-by-Step Logic
-```ts
-Copy
-Edit
-private extractReasoningSteps(content: string): ReasoningStep[] {
-  const steps: ReasoningStep[] = []
-  const lines = content.split('\n')
-  let stepCount = 0
-
-  for (const line of lines) {
-    // Look for step indicators like "Step 1:" or "1."
-    const stepMatch = line.match(/^(?:Step\s+)?(\d+)[:.]?\s*(.+)$/i)
-    if (stepMatch) {
-      stepCount++
-      steps.push({
-        step: stepCount,
-        content: stepMatch[2].trim(),
-        confidence: 0.8,
-        sources: []
-      })
-    }
-  }
-  return steps
-}
-```
-**Description:** In reasoning mode, answers are expected to include an ordered thought process. This utility scans the text for step indicators (e.g., “Step 1:” or “1.”), producing a structured array of steps with content and an initial confidence score. This enables the client to render reasoning as a clear, enumerated sequence.
-
-## VR Spatial Response Visualization
-```ts
-Copy
-Edit
-function createSpatialPanels(response: any, mode: string, query: string): any[] {
-  const panels: any[] = []
-
-  // Main content panel
-  panels.push({
-    id: `panel_${Date.now()}_main`,
-    type: 'content',
-    position: [0, 1.5, -2],
-    rotation: [0, 0, 0],
-    title: mode === 'greeting' ? 'Welcome to Monday' : `Learning: ${query}`,
-    content: response.content,
-    isActive: true,
-    opacity: 1,
-    createdAt: Date.now()
-  })
-
-  // Citations panel if available
-  if (response.citations && response.citations.length > 0) {
-    panels.push({
-      id: `panel_${Date.now()}_citations`,
-      type: 'content',
-      position: [2, 1.2, -1.5],
-      rotation: [0, -30, 0],
-      title: 'Sources & Citations',
-      content: response.citations.map((c, i) => 
-        `${i + 1}. ${c.title}\n${c.snippet}`
-      ).join('\n\n'),
-      citations: response.citations,
-      isActive: false,
-      opacity: 0.8,
-      createdAt: Date.now()
-    })
-  }
-
-  // Reasoning panel for complex queries
-  if (response.reasoning && response.reasoning.length > 0) {
-    panels.push({
-      id: `panel_${Date.now()}_reasoning`,
-      type: 'reasoning',
-      position: [-2, 1.2, -1.5],
-      rotation: [0, 30, 0],
-      title: 'Reasoning Steps',
-      content: response.reasoning.map((r) => 
-        `Step ${r.step}: ${r.content}`
-      ).join('\n\n'),
-      reasoning: response.reasoning,
-      isActive: false,
-      opacity: 0.8,
-      createdAt: Date.now()
-    })
-  }
-
-  return panels
-}
-```
-
-**Description**: To bridge AI output into a 3D presentation, the backend constructs spatial panel objects. A main content panel is centered; optional citations and reasoning panels are positioned to the sides. Each panel has an ID, type, position/rotation, title, content, and opacity. These definitions are sent with the response so the client can render floating informational boards in VR.
+* **Frontend**: TypeScript with Three.js for 3D visualizations and WebXR for VR support
+* **Backend**: Node.js with Socket.IO for real-time voice command processing
+* **AI Integration**: Perplexity Sonar API for intelligent responses with reasoning extraction
+* **Voice Processing**: ElevenLabs for speech synthesis and natural language understanding
+* **Content Curation**: YouTube API integration with smart keyword extraction for educational videos
+* **Accessibility**: Voice-first design with spatial audio and haptic feedback support
 
 ## Links
 
