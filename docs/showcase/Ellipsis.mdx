@@ -21,7 +21,7 @@ keywords: [ellipsis, podcast, audio, generation, TTS, perplexity, multi-speaker,
 
 * Node.js v16+ and npm/yarn
 * Python 3.10+ and pip
-* Redis server running (default on `localhost:6380`)
+* Redis server running (default on port 6380)
 * Perplexity API key, Podbean credentials
 
 ## Installation
@@ -51,7 +51,7 @@ npm install
 
 Create `backend/.env`:
 ```ini
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://your-redis-host:6379
 PERPLEXITY_API_KEY=your_key_here
 PODBEAN_CLIENT_ID=...
 PODBEAN_CLIENT_SECRET=...
@@ -59,7 +59,7 @@ PODBEAN_CLIENT_SECRET=...
 
 Create `frontend/.env`:
 ```ini
-REACT_APP_API_URL=http://127.0.0.1:5000
+REACT_APP_API_URL=http://your-backend-host:5000
 ```
 
 ## Usage
