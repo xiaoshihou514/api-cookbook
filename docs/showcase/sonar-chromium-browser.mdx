@@ -1,64 +1,77 @@
 ---
-| title                         | description                                                                                   | sidebar_position | keywords                                                       |
-|-------------------------------|-----------------------------------------------------------------------------------------------|------------------|----------------------------------------------------------------|
-| Sonar Chromium Browser | Chromium browser with native Perplexity Sonar API integration: omnibox answers & context-menu summarization | 9                | sonar, chromium, omnibox, context-menu, summarize, hackathon, api |
-
+title: Sonar Chromium Browser | Native Search Omnibox and Context Menu
+description: Chromium browser patch with native Perplexity Sonar API integration providing omnibox answers and context-menu summarization
+sidebar_position: 15
+keywords: [sonar, chromium, omnibox, context-menu, summarize, hackathon, api, browser, integration]
 ---
 
-## 🚀 Project: Sonar Chromium Browser
 
-**GitHub Repo:** [KoushikBaagh/sonar-chromium-browser](https://github.com/KoushikBaagh/perplexity-hackathon-chromium)
+**Sonar Chromium Browser** is a Chromium browser patch that natively integrates Perplexity's Sonar API to provide AI-powered functionality directly in the browser. Users can type `sonar <query>` in the omnibox for instant AI answers or select text and right-click "Summarize with Sonar" for quick summaries, streamlining research and browsing workflows.
 
-**Chromium Gerrit Repo:** [KoushikBaagh/google-gerrit-repo](https://chromium-review.googlesource.com/c/chromium/src/+/6778540)
+## Features
 
-### 📖 Project Overview
+* **Omnibox AI Answers** with `sonar <query>` syntax for instant responses
+* **Context-menu Summarization** for selected text with one-click access
+* **Native Browser Integration** using Chromium's omnibox and context-menu APIs
+* **Dual Model Support** using Sonar Pro for omnibox and Sonar for summaries
+* **Debounced Input Handling** for efficient API usage
+* **Custom Browser Build** demonstrating AI integration patterns
 
-This Chrome browser patch integrates Perplexity’s Sonar API directly into Chromium, enabling:
+## Prerequisites
 
-- **Omnibox Answers:** Type `sonar your question` in the address bar to get instant AI responses as autocomplete suggestions.
-- **Context-menu Summarization:** Select any text on a page, right-click **Summarize with Sonar**, and view a concise summary in a new tab.
+* Ubuntu 22.04 (WSL2 recommended)
+* Chromium source code checkout
+* Perplexity API key
+* 16GB+ RAM for Chromium build
+* Git and standard build tools
 
-### 🎥 Demonstration Video
+## Installation
 
-[![Watch the demo](https://img.youtube.com/vi/nFhciodeQ-c/0.jpg)](https://youtu.be/nFhciodeQ-c)
+```bash
+# Clone the repository
+git clone https://github.com/KoushikBaagh/perplexity-hackathon-chromium.git
+cd perplexity-hackathon-chromium
 
-### 🔍 What This Does
-
-1. **Sonar-Powered Omnibox Answers**
-
-   - Detects the `sonar` keyword in the omnibox
-   - Debounces input and queries the Sonar API
-   - Renders the AI’s answer inline as a high-relevance suggestion
-
-2. **Context-menu “Summarize with Sonar”**
-   - Activates when text is selected
-   - Sends selection to Sonar API with a “Please summarize” prompt
-   - Opens a new `data:` URL tab showing original text + summary
-
-### 🛠 Key Features & Use Cases
-
-- **Instant Research:** Get definitions, explanations, and summaries without leaving your tab.
-- **Developer Productivity:** Quickly test API integrations inside the browser.
-- **Custom Browser Builds:** See how to hook into Chromium’s omnibox and context menus.
-
-### ⚙️ How It Uses Perplexity Sonar
-
-```js
-// Omnibox query (model=sonar-pro)
-await client.chat.completions.create({
-  model: "sonar-pro",
-  messages: [
-    { role: "system", content: "Be precise and concise." },
-    { role: "user", content: "What is quantum tunneling?" },
-  ],
-});
-
-// Context-menu summarization (model=sonar)
-await client.chat.completions.create({
-  model: "sonar",
-  messages: [
-    { role: "system", content: "Summarize the following text concisely." },
-    { role: "user", content: selectedText },
-  ],
-});
+# Apply patches to Chromium source
+# Follow the README for detailed Chromium setup instructions
 ```
+
+## Configuration
+
+Update API keys in the modified files:
+```cpp
+// In sonar_autocomplete_provider.cc and render_view_context_menu.cc
+const std::string API_KEY = "your_perplexity_api_key_here";
+```
+
+## Usage
+
+1. **Build Chromium** with applied patches following the repository instructions
+2. **Launch the custom browser** with AI integration
+3. **Use Omnibox AI**: Type `sonar what is quantum tunneling?` in address bar
+4. **Use Context Summarization**: Select text, right-click "Summarize with Sonar"
+
+## Code Explanation
+
+* **Omnibox Integration**: Custom autocomplete provider hooking into Chromium's omnibox API
+* **Context Menu**: Modified render view context menu for text summarization
+* **API Integration**: Direct Perplexity Sonar API calls with debounced input handling
+* **Model Selection**: Sonar Pro for omnibox queries, Sonar for text summarization
+* **Browser Architecture**: Demonstrates Chromium extension points for AI features
+* **Build Process**: Custom Chromium build with AI patches applied
+
+## Demo Video
+
+<iframe
+  className="w-full aspect-video rounded-xl"
+  src="https://www.youtube.com/embed/nFhciodeQ-c"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+## Links
+
+- [GitHub Repository](https://github.com/KoushikBaagh/perplexity-hackathon-chromium)
+- [Chromium Gerrit Repository](https://chromium-review.googlesource.com/c/chromium/src/+/6778540)
