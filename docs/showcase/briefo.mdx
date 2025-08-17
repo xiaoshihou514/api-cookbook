@@ -26,13 +26,16 @@ keywords: [Briefo, finance, news, social media, React Native, Supabase]
 
 ## Installation
 
+```bash
 git clone https://github.com/adamblackman/briefo-public.git
 cd briefo-public
 npm install
+```
 ### Environment variables
 
+```ini
 # .env              (project root)
-MY_SUPABASE_URL=https://&lt;project&gt;.supabase.co
+MY_SUPABASE_URL=https://<project>.supabase.co
 MY_SUPABASE_SERVICE_ROLE_KEY=...
 PERPLEXITY_API_KEY=...
 LINKPREVIEW_API_KEY=...
@@ -41,15 +44,20 @@ ALPACA_SECRET_KEY=...
 
 # .env.local        (inside supabase/)
 # duplicate or override any secrets needed by Edge Functions
+```
 
 ## Usage
 Run the Expo development server:
 
+```bash
 npx expo start
+```
 
 Deploy Edge Functions when you are ready:
 
+```bash
 supabase functions deploy perplexity-news perplexity-chat perplexity-research portfolio-tab-data
+```
 
 ## Code Explanation
 
@@ -60,5 +68,5 @@ supabase functions deploy perplexity-news perplexity-chat perplexity-research po
 * Testing and Linting: ESLint, Prettier, and Expo Lint maintain code quality
 
 ## Links
-https://github.com/adamblackman/briefo-public
-https://www.briefo.fun/
+[GitHub Repository](https://github.com/adamblackman/briefo-public)
+[Live Demo](https://www.briefo.fun/)
