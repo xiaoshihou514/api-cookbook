@@ -1,0 +1,39 @@
+# PerplexiCart – AI Powered Value Aligned Shopping Assistant
+
+<p>
+  <img src="https://ucarecdn.com/064a61a4-86a3-42e1-a52e-4dd8cbba3adc/perplexicart.jpg" width="40%" />
+  <img src="https://ucarecdn.com/6489c8df-4e6c-48eb-91fd-e4b9b75e7528/perplexicart1.jpg" width="50%" />
+</p>
+
+**Description**  
+PerplexiCart is an AI-powered shopping assistant that helps users make *informed* and *value-aligned* purchasing decisions. Powered by the **Perplexity Sonar API**, it analyzes products across the web and delivers structured insights, including prioritized recommendations, pros/cons, trade-off analysis, and user sentiment — all tailored to the user’s stated preferences (e.g. “Eco-Friendly”, “Made in India”, “Durability”, etc.) and context.
+
+**Key Features & Use Cases**
+-  Intelligent product recommendations (beyond simple spec comparison)
+- Priority-based value alignment (Best Value, Eco-Friendly, Ethical, Durability, Made in India)
+-  Contextual personalization (e.g. skin type, usage patterns, region)
+- Structured research output:
+  - Research summary  
+  - Top product recommendations  
+  - Value alignment & reasoning  
+  - Pros / Cons  
+  - Key specifications  
+  - User sentiment & community insights (Reddit, Quora, etc.)  
+  - Trade-off analysis  
+  - General buying tips  
+
+**🔗 Live Demo**  
+https://perplexicart.vercel.app/
+
+**📂 GitHub Repository**  
+https://github.com/fizakhan90/perplexicart
+
+**How the Sonar API Is Used**
+PerplexiCart integrates the **Perplexity Sonar API** as its core intelligence engine:
+
+-  **Dynamic prompt engineering** — Prompts are customized based on the user’s search query, selected priority, and optional context.
+-  **Structured JSON responses** — We enforce a strict JSON schema via the `response_format` parameter to ensure consistent structured output.
+- **Live web research** — The API is instructed to search e-commerce platforms, forums (Reddit, Quora), review blogs, and sustainability reports.
+- **Semantic analysis** — Extracts product alignment, pros/cons, user sentiment, and cites relevant sources for transparency.
+-  **Frontend delivery** — The FastAPI backend parses the structured response and serves it to the Next.js frontend for a clean, user-friendly display.
+
