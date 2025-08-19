@@ -1,39 +1,96 @@
-# PerplexiCart – AI Powered Value Aligned Shopping Assistant
+---
+title: PerplexiCart | AI-Powered Value-Aligned Shopping Assistant
+description: An AI shopping assistant that uses Perplexity Sonar to deliver structured research, value-aligned recommendations, and transparent citations across the web
+sidebar_position: 24
+keywords: [PerplexiCart, shopping, e-commerce, recommendations, value alignment, Sonar, Perplexity, Next.js, FastAPI]
+---
 
-<p>
-  <img src="https://ucarecdn.com/064a61a4-86a3-42e1-a52e-4dd8cbba3adc/perplexicart.jpg" width="40%" />
-  <img src="https://ucarecdn.com/6489c8df-4e6c-48eb-91fd-e4b9b75e7528/perplexicart1.jpg" width="50%" />
-</p>
+**PerplexiCart** helps users make informed, value-aligned purchasing decisions. Powered by the **Perplexity Sonar API**, it analyzes products across the web and returns structured insights with prioritized recommendations, pros/cons, trade‑off analysis, and user sentiment — tailored to preferences like Eco‑Friendly, Durability, Ethical, and region‑specific needs.
 
-**Description**  
-PerplexiCart is an AI-powered shopping assistant that helps users make *informed* and *value-aligned* purchasing decisions. Powered by the **Perplexity Sonar API**, it analyzes products across the web and delivers structured insights, including prioritized recommendations, pros/cons, trade-off analysis, and user sentiment — all tailored to the user’s stated preferences (e.g. “Eco-Friendly”, “Made in India”, “Durability”, etc.) and context.
+<iframe
+  className="w-full aspect-video rounded-xl"
+  src="https://www.youtube.com/embed/5qzbRas0rxc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
 
-**Key Features & Use Cases**
--  Intelligent product recommendations (beyond simple spec comparison)
-- Priority-based value alignment (Best Value, Eco-Friendly, Ethical, Durability, Made in India)
--  Contextual personalization (e.g. skin type, usage patterns, region)
-- Structured research output:
-  - Research summary  
-  - Top product recommendations  
-  - Value alignment & reasoning  
-  - Pros / Cons  
-  - Key specifications  
-  - User sentiment & community insights (Reddit, Quora, etc.)  
-  - Trade-off analysis  
-  - General buying tips  
+## Features
 
-**🔗 Live Demo**  
-https://perplexicart.vercel.app/
+* **Intelligent Product Recommendations** beyond simple spec comparison
+* **Priority-Based Value Alignment** (Best Value, Eco‑Friendly, Ethical, Durability, Made in India)
+* **Contextual Personalization** (skin type, usage patterns, region, etc.)
+* **Structured Research Output** with:
+  - Research summary and top recommendations
+  - Value alignment with reasoning
+  - Pros/Cons and key specifications
+  - User sentiment and community insights (Reddit, Quora)
+  - Trade‑off analysis and buying tips
+* **Transparent Sources** with citations for verification
 
-**📂 GitHub Repository**  
-https://github.com/fizakhan90/perplexicart
+## Prerequisites
 
-**How the Sonar API Is Used**
-PerplexiCart integrates the **Perplexity Sonar API** as its core intelligence engine:
+* Node.js 18+ and npm/yarn
+* Python 3.10+ and pip
+* Perplexity API key
 
--  **Dynamic prompt engineering** — Prompts are customized based on the user’s search query, selected priority, and optional context.
--  **Structured JSON responses** — We enforce a strict JSON schema via the `response_format` parameter to ensure consistent structured output.
-- **Live web research** — The API is instructed to search e-commerce platforms, forums (Reddit, Quora), review blogs, and sustainability reports.
-- **Semantic analysis** — Extracts product alignment, pros/cons, user sentiment, and cites relevant sources for transparency.
--  **Frontend delivery** — The FastAPI backend parses the structured response and serves it to the Next.js frontend for a clean, user-friendly display.
+## Installation
 
+```bash
+# Clone the repository
+git clone https://github.com/fizakhan90/perplexicart.git
+cd perplexicart
+
+# Backend (FastAPI) setup
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# Frontend (Next.js) setup
+cd ../frontend
+npm install
+```
+
+## Configuration
+
+Create a `.env` file in the backend directory:
+```ini
+PERPLEXITY_API_KEY=your_perplexity_api_key
+```
+
+(Optional) Add any app‑specific settings as needed (cache, region defaults, etc.).
+
+## Usage
+
+1. **Start Backend (FastAPI)**:
+   ```bash
+   cd backend
+   uvicorn main:app --reload  # adapt module:app if your entrypoint differs
+   ```
+
+2. **Start Frontend (Next.js)**:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. **Open the App**: Visit `http://localhost:3000` and search for a product. Select your priority (e.g., Eco‑Friendly) and add optional context (skin type, region).
+
+## Code Explanation
+
+* **Backend (FastAPI)**: Orchestrates Sonar calls with dynamic prompt engineering based on query, selected priority, and context
+* **Structured Outputs**: Enforces a strict JSON schema via `response_format` to ensure consistent UI rendering
+* **Live Web Research**: Directs Sonar to search e‑commerce platforms, forums, review blogs, and sustainability reports
+* **Semantic Analysis**: Extracts value alignment, pros/cons, sentiment, and cites sources for transparency
+* **Frontend (Next.js/React)**: Presents a clear, user‑friendly view of recommendations, trade‑offs, and citations
+
+## How the Sonar API Is Used
+
+PerplexiCart leverages the **Perplexity Sonar API** as its intelligence core, dynamically generating customized prompts based on user inputs like search queries, priorities and context. The API performs comprehensive web research across e-commerce sites, forums, and review platforms, with responses structured in a consistent JSON format. Through semantic analysis, it extracts key product insights including alignment with user priorities, pros/cons, and sentiment - all backed by cited sources. The FastAPI backend processes these structured responses before serving them to the Next.js frontend for a polished user experience.
+
+## Links
+
+- **Live Demo**: https://perplexicart.vercel.app/
+- **GitHub Repository**: https://github.com/fizakhan90/perplexicart
