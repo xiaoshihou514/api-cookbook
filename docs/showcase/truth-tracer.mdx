@@ -1,432 +1,132 @@
 ---
-title: "TruthTracer - AI-Powered Misinformation Detection Platform"
-description: "A comprehensive misinformation detection platform that uses Perplexity's Sonar API to analyze claims, trace trust chains, and provide Socratic reasoning for fact verification."
-tags: ["AI", "Fact-Checking", "Misinformation Detection", "Perplexity API", "NestJS", "React"]
-github: "https://github.com/anthony-okoye/truth-tracer-backend"
-demo: "https://truthtracer.netlify.app/"
+title: TruthTracer | AI-Powered Misinformation Detection Platform
+description: A comprehensive misinformation detection platform that uses Perplexity's Sonar API to analyze claims, trace trust chains, and provide Socratic reasoning for fact verification
+sidebar_position: 25
+keywords: [TruthTracer, misinformation detection, fact-checking, trust chain analysis, Socratic reasoning, Perplexity, Sonar API, NestJS, React]
 ---
 
-# TruthTracer: AI-Powered Misinformation Detection
+**TruthTracer** is a comprehensive misinformation detection platform that leverages Perplexity's Sonar API to provide multi-layered claim analysis. The platform combines fact-checking, trust chain tracing, and Socratic reasoning to deliver accurate, evidence-based verification results with confidence scores and detailed sourcing.
 
-TruthTracer is a comprehensive misinformation detection platform that leverages Perplexity's Sonar API to provide multi-layered claim analysis. The platform combines fact-checking, trust chain tracing, and Socratic reasoning to deliver accurate, evidence-based verification results.
+### Demo
 
-## 🎯 Project Overview
+<iframe
+  className="w-full aspect-video rounded-xl"
+  src="https://www.youtube.com/embed/twXeyK5ajyE"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
 
-TruthTracer addresses the growing challenge of misinformation by providing:
-- **Multi-method Analysis**: Combines fact-checking, trust chain analysis, and Socratic reasoning
-- **AI-Powered Verification**: Uses Perplexity's advanced Sonar models for accurate analysis
-- **Real-time Processing**: Parallel execution of multiple analysis methods
-- **Evidence-based Results**: Provides sources, confidence scores, and detailed reasoning
-- **User-friendly Interface**: Clean, intuitive frontend for claim submission and result viewing
+## Features
 
-## 🏗️ Architecture
+* **Multi-method Analysis** combining fact-checking, trust chain analysis, and Socratic reasoning
+* **AI-Powered Verification** using Perplexity's Sonar, Sonar Deep Research, and Sonar Reasoning models
+* **Real-time Processing** with parallel execution of multiple analysis methods
+* **Evidence-based Results** providing sources, confidence scores, and detailed reasoning
+* **Clean Architecture** with NestJS backend and React frontend
+* **Production-Ready** with Docker deployment, comprehensive testing, and API documentation
+* **Configurable Confidence Scoring** with customizable weights and thresholds
 
-### Backend (NestJS)
-The backend is built with NestJS following clean architecture principles:
+## Prerequisites
 
-```typescript
-// Core service structure
-@Injectable()
-export class SonarClient implements ISonarService {
-  async analyzeClaim(claim: string): Promise<SonarResponseDto> {
-    // Parallel execution of all three analysis methods
-    const [factCheckResult, trustChainResult, socraticResult] = await Promise.all([
-      this.performFactCheck(claim),
-      this.performTrustChainAnalysis(claim),
-      this.performSocraticReasoning(claim)
-    ]);
+* Node.js 18+ and npm
+* Perplexity API key (Sonar models access)
+* Docker (optional for deployment)
+* Git for repository cloning
 
-    return this.combineResults(factCheckResult, trustChainResult, socraticResult);
-  }
-}
-```
+## Installation
 
-### Frontend (React)
-The frontend provides an intuitive interface for claim submission and result visualization:
-
-```typescript
-// Claim submission component
-const ClaimAnalyzer: React.FC = () => {
-  const [claim, setClaim] = useState('');
-  const [results, setResults] = useState<SonarResponseDto | null>(null);
-
-  const analyzeClaim = async () => {
-    const response = await fetch('/api/claims/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ claim })
-    });
-    const data = await response.json();
-    setResults(data);
-  };
-
-  return (
-    <div className="claim-analyzer">
-      <textarea 
-        value={claim} 
-        onChange={(e) => setClaim(e.target.value)}
-        placeholder="Enter a claim to verify..."
-      />
-      <button onClick={analyzeClaim}>Analyze Claim</button>
-      {results && <ResultsDisplay results={results} />}
-    </div>
-  );
-};
-```
-
-## 🔌 Perplexity Sonar API Integration
-
-### API Configuration
-TruthTracer integrates with Perplexity's Sonar API using three specialized models:
-
-```typescript
-// API configuration
-const sonarConfig = {
-  baseUrl: 'https://api.perplexity.ai',
-  models: {
-    factCheck: 'sonar',
-    trustChain: 'sonar-deep-research',
-    socratic: 'sonar-reasoning'
-  },
-  maxTokens: {
-    factCheck: 500,
-    trustChain: 2500,
-    socratic: 4000
-  }
-};
-```
-
-### Analysis Methods
-
-#### 1. Fact Check Analysis
-```typescript
-// Fact check template
-const factCheckTemplate = {
-  system: `You are a fact-checking assistant. Your task is to provide quick and accurate verification of claims.
-
-IMPORTANT: You MUST respond with valid JSON only. Do not include any other text or explanation outside the JSON structure.
-
-RESPONSE FORMAT:
-{
-  "verdict": "TRUE" | "FALSE" | "MISLEADING" | "UNVERIFIABLE",
-  "explanation": "Brief explanation of the verdict",
-  "sources": [
-    {
-      "title": "Source title",
-      "url": "Source URL",
-      "reliability": "High/Medium/Low"
-    }
-  ]
-}`,
-  max_tokens: 500
-};
-```
-
-#### 2. Trust Chain Analysis
-```typescript
-// Trust chain template
-const trustChainTemplate = {
-  system: `You are a trust chain analyzer. Your task is to trace the origin and propagation of claims.
-
-RESPONSE FORMAT:
-{
-  "hasTrustChain": boolean,
-  "confidence": number (0-1),
-  "sources": [
-    {
-      "name": "Source name",
-      "url": "Source URL",
-      "reliability": number (0-1)
-    }
-  ],
-  "explanation": "Detailed explanation of the trust chain analysis",
-  "gaps": ["List of gaps or weaknesses in the trust chain"],
-  "context": "Additional context about the trust chain analysis"
-}`,
-  max_tokens: 2500
-};
-```
-
-#### 3. Socratic Reasoning
-```typescript
-// Socratic reasoning template
-const socraticTemplate = {
-  system: `You are a Socratic reasoning analyzer. Your task is to break down claims through logical questioning and critical analysis.
-
-RESPONSE FORMAT:
-{
-  "reasoningSteps": [
-    {
-      "question": "Critical question about the claim",
-      "analysis": "Logical analysis of this aspect",
-      "evidence": "Supporting or contradicting evidence",
-      "implications": "What this reveals about the claim"
-    }
-  ],
-  "conclusion": {
-    "logicalValidity": "Assessment of claim's logical structure",
-    "keyFlaws": "Major logical flaws or gaps",
-    "strengths": "Strong aspects of the claim",
-    "recommendations": "How to strengthen the claim"
-  }
-}`,
-  max_tokens: 4000
-};
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- Perplexity Sonar API key
-- Docker (optional)
-
-### Backend Setup
 ```bash
-# Clone the repository
+# Clone the backend repository
 git clone https://github.com/anthony-okoye/truth-tracer-backend.git
 cd truth-tracer-backend
 
 # Install dependencies
 npm install
 
-# Configure environment variables
-cp .env.example .env
-# Edit .env with your Perplexity API key
+# Clone the frontend repository
+git clone https://github.com/anthony-okoye/truth-tracer-front.git
+cd truth-tracer-front
+
+# Install frontend dependencies
+npm install
 ```
 
-### Environment Configuration
-```bash
+## Configuration
+
+Create `.env` file in the backend directory:
+```ini
 # Required
 SONAR_API_KEY=your_perplexity_api_key
 SONAR_API_URL=https://api.perplexity.ai
 
-# Optional
+# Optional configuration
 SONAR_TIMEOUT=30000
 SONAR_MAX_RETRIES=3
-SONAR_RETRY_DELAY=1000
 CONFIDENCE_WEIGHT_FACT_CHECK=0.35
 CONFIDENCE_WEIGHT_TRUST_CHAIN=0.25
 CONFIDENCE_WEIGHT_SOCRATIC=0.20
 ```
 
-### Frontend Setup
+## Usage
+
+1. **Start Backend**:
 ```bash
-# Clone the frontend repository
-git clone https://github.com/anthony-okoye/truth-tracer-front.git
-cd truth-tracer-front
+   cd truth-tracer-backend
+   npm run start:dev
+   ```
 
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-```
-
-## 📊 API Usage Examples
-
-### Basic Claim Analysis
+2. **Start Frontend**:
 ```bash
-curl -X POST http://localhost:3030/claims/analyze \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "claim": "The Earth is flat and NASA has been hiding this fact for decades.",
-    "modelType": "sonar",
-    "analysisType": "fact-check"
-  }'
-```
+   cd truth-tracer-front
+   npm start
+   ```
 
-### Response Format
+3. **Access Application**: Open http://localhost:3000 in your browser
+
+4. **Analyze Claims**:
+   - Enter a claim in the text area
+   - Click "Analyze Claim" to run fact-checking, trust chain analysis, and Socratic reasoning
+   - View results with confidence scores, sources, and detailed explanations
+
+## Code Explanation
+
+* **Backend**: NestJS application with clean architecture following TypeScript best practices
+* **AI Integration**: Perplexity Sonar API with three specialized models - Sonar for fact-checking, Sonar Deep Research for trust chain analysis, and Sonar Reasoning for logical evaluation
+* **Parallel Processing**: Simultaneous execution of all three analysis methods for efficient claim verification
+* **Response Sanitization**: Custom JSON parsing and validation to handle various API response formats
+* **Confidence Scoring**: Weighted scoring system combining results from all three analysis methods
+* **Frontend**: React application with intuitive claim submission interface and detailed results visualization
+* **Testing**: Comprehensive test suite including unit tests, end-to-end tests, and claim analysis testing
+
+## How the Sonar API is Used
+
+TruthTracer leverages Perplexity's Sonar API through three distinct analysis approaches:
+
 ```typescript
-interface SonarResponseDto {
-  factCheck?: FactCheckResponse;
-  trustChain?: TrustChainResponse;
-  socratic?: SocraticReasoningResponse;
-  status: AnalysisStatus;
-}
-
-interface FactCheckResponse {
-  verdict: 'TRUE' | 'FALSE' | 'MISLEADING' | 'UNVERIFIABLE';
-  confidence: number;
-  explanation: string;
-  sources: Source[];
-  notes?: string;
-}
+// Parallel execution of multiple Sonar models
+const [factCheckResult, trustChainResult, socraticResult] = await Promise.all([
+  sonarClient.chat.completions.create({
+    model: "sonar",
+    messages: [{ role: "user", content: factCheckPrompt }],
+    max_tokens: 500
+  }),
+  sonarClient.chat.completions.create({
+    model: "sonar-deep-research", 
+    messages: [{ role: "user", content: trustChainPrompt }],
+    max_tokens: 2500
+  }),
+  sonarClient.chat.completions.create({
+    model: "sonar-reasoning",
+    messages: [{ role: "user", content: socraticPrompt }],
+    max_tokens: 4000
+  })
+]);
 ```
 
-## 🧪 Testing & Validation
+## Links
 
-### Running Tests
-```bash
-# Unit tests
-npm run test
-
-# End-to-end tests
-npm run test:e2e
-
-# Claim analysis test
-npm run test:claim
-```
-
-### Test Claim Example
-```typescript
-// test-claim.ts
-const testClaim = "The Earth is flat and NASA has been hiding this fact for decades.";
-
-const result = await sonarService.analyzeClaim(testClaim);
-
-console.log('Fact Check:', result.factCheck);
-console.log('Trust Chain:', result.trustChain);
-console.log('Socratic Reasoning:', result.socratic);
-```
-
-## 🔧 Advanced Configuration
-
-### Confidence Scoring
-```typescript
-// Verification weights configuration
-export const VERIFICATION_WEIGHTS = {
-  FACT_CHECK: 0.4,      // 40% weight
-  TRUST_CHAIN: 0.3,     // 30% weight
-  SOCRATIC: 0.3         // 30% weight
-} as const;
-
-// Confidence thresholds
-export const CONFIDENCE_THRESHOLDS = {
-  VERIFIED: 0.7,
-  MINIMUM: 0.0,
-  MAXIMUM: 1.0,
-  DEFAULT: 0.5
-} as const;
-```
-
-### Response Sanitization
-```typescript
-@Injectable()
-export class SonarResponseSanitizer implements IResponseSanitizer {
-  sanitizeResponse<T>(response: string): SanitizationResult<T> {
-    // 1. Validate if response is already valid JSON
-    if (this.isValidJSON(response)) {
-      return this.buildResult(true, JSON.parse(response), response, ['Valid JSON']);
-    }
-
-    // 2. Remove markdown formatting and extract JSON
-    const cleanedResponse = response.replace(/```(?:json)?\s*([\s\S]*?)```/gi, '$1');
-    
-    // 3. Attempt to parse cleaned response
-    if (this.isValidJSON(cleanedResponse)) {
-      return this.buildResult(true, JSON.parse(cleanedResponse), response, ['Markdown cleaned']);
-    }
-
-    throw new Error('Unable to sanitize response to valid JSON');
-  }
-}
-```
-
-## 📱 Frontend Features
-
-### Claim Submission Interface
-The frontend provides an intuitive interface for users to:
-- Submit claims for analysis
-- View real-time analysis progress
-- Explore detailed results with interactive components
-- Access analysis history and saved results
-
-### Results Visualization
-- **Fact Check Results**: Clear verdict display with confidence scores
-- **Trust Chain Mapping**: Visual representation of information flow
-- **Socratic Reasoning**: Step-by-step logical analysis breakdown
-- **Source Citations**: Clickable links to supporting evidence
-
-## 🚀 Deployment
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Or build individual images
-docker build -t truth-tracer-backend .
-docker build -t truth-tracer-front .
-```
-
-### Production Considerations
-- **Environment Variables**: Secure API key management
-- **Rate Limiting**: Implement API usage limits
-- **Monitoring**: Health checks and performance metrics
-- **Scaling**: Horizontal scaling for high traffic
-
-## 🔍 Use Cases
-
-### 1. News Verification
-Journalists and fact-checkers can verify claims from news articles, social media posts, and public statements.
-
-### 2. Academic Research
-Researchers can validate claims and trace information sources for academic papers and studies.
-
-### 3. Social Media Monitoring
-Platforms can integrate TruthTracer to automatically flag potentially misleading content.
-
-### 4. Educational Content
-Educators can use the platform to teach critical thinking and source evaluation skills.
-
-## 🎯 Future Enhancements
-
-### Planned Features
-- **Database Integration**: Persistent storage for analysis results
-- **User Authentication**: User accounts and analysis history
-- **API Rate Limiting**: Advanced usage management
-- **Machine Learning**: Improved accuracy through model training
-- **Multi-language Support**: Analysis in multiple languages
-
-### Integration Opportunities
-- **Browser Extensions**: Real-time fact-checking while browsing
-- **Mobile Apps**: On-the-go claim verification
-- **CMS Plugins**: Content verification for websites
-- **API Marketplace**: Third-party integrations
-
-## 📚 Resources
-
-### Documentation
-- **Backend API**: [Swagger UI](http://localhost:3030/api/docs)
-- **Frontend Demo**: [Live Demo](https://truthtracer.netlify.app/)
-- **GitHub Backend**: [Repository](https://github.com/anthony-okoye/truth-tracer-backend)
-- **GitHub Frontend**: [Repository](https://github.com/anthony-okoye/truth-tracer-front)
-
-### Community
-- **Issues**: Report bugs and request features
-- **Discussions**: Share ideas and get help
-- **Contributing**: Guidelines for contributors
-
-## 🏆 Key Benefits
-
-### For Developers
-- **Clean Architecture**: Well-structured, maintainable codebase
-- **Type Safety**: Full TypeScript implementation
-- **Testing**: Comprehensive test coverage
-- **Documentation**: Detailed API and implementation docs
-
-### For Users
-- **Accurate Results**: Multi-method verification approach
-- **Fast Processing**: Parallel analysis execution
-- **Clear Explanations**: Understandable reasoning and evidence
-- **Source Transparency**: Access to supporting evidence
-
-### For Organizations
-- **Scalable Solution**: Built for high-volume usage
-- **Cost Effective**: Optimized API usage and caching
-- **Customizable**: Configurable weights and thresholds
-- **Integrable**: Easy to integrate with existing systems
-
----
-
-*TruthTracer demonstrates how to build a production-ready misinformation detection platform using Perplexity's Sonar API. The project showcases best practices in API integration, clean architecture, and user experience design.*
-
-
-## 🔗 Quick Links
-
-- **Live Demo**: [https://truthtracer.netlify.app/](https://truthtracer.netlify.app/)
-- **Backend Code**: [https://github.com/anthony-okoye/truth-tracer-backend](https://github.com/anthony-okoye/truth-tracer-backend)
-- **Frontend Code**: [https://github.com/anthony-okoye/truth-tracer-front](https://github.com/anthony-okoye/truth-tracer-front)
-- **API Documentation**: [http://localhost:3030/api/docs](http://localhost:3030/api/docs)
+- [Live Demo](https://truthtracer.netlify.app/)
+- [Backend Repository](https://github.com/anthony-okoye/truth-tracer-backend)
+- [Frontend Repository](https://github.com/anthony-okoye/truth-tracer-front)
