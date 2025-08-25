@@ -4,7 +4,8 @@ A comprehensive collection of practical examples, integration guides, and commun
 
 <a href="https://docs.perplexity.ai/cookbook" target="_blank">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/static/img/perplexity-sonar.png" style="max-width: 100%; width: 400px; margin-bottom: 20px">
+    <source media="(prefers-color-scheme: dark)" srcset="/static/img/perplexity-sonar-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="/static/img/perplexity-sonar.png">
     <img src="/static/img/perplexity-sonar.png" alt="Perplexity Sonar" style="max-width: 100%; width: 400px; margin-bottom: 20px">
   </picture>
 </a>
