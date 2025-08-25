@@ -1,13 +1,12 @@
-# Perplexity Sonar API Cookbook
-
-A comprehensive collection of practical examples, integration guides, and community showcases for building with [Perplexity's Sonar API](https://sonar.perplexity.ai/) - the fastest, most cost-effective AI answer engine with real-time search capabilities.
-
 <a href="https://docs.perplexity.ai/cookbook" target="_blank">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/static/img/perplexity-sonar.png" style="max-width: 100%; width: 400px; margin-bottom: 20px">
+    <source media="(prefers-color-scheme: dark)" srcset="/static/img/perplexity-sonar.png">
+    <source media="(prefers-color-scheme: light)" srcset="/static/img/perplexity-sonar-dark.png">
     <img src="/static/img/perplexity-sonar.png" alt="Perplexity Sonar" style="max-width: 100%; width: 400px; margin-bottom: 20px">
   </picture>
 </a>
+
+A comprehensive collection of practical examples, integration guides, and community showcases for building with [Perplexity's Sonar API](https://sonar.perplexity.ai/) - the fastest, most cost-effective AI answer engine with real-time search capabilities.
 
 📖 **[View the full cookbook →](https://docs.perplexity.ai/cookbook)**
 
