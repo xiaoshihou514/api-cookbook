@@ -1,0 +1,92 @@
+---
+title: StarPlex
+description: An AI-powered startup intelligence platform that helps entrepreneurs validate their business ideas and find the right resources to succeed.
+sidebar_position: 1
+keywords: [startup, AI, business ideas, Perplexity, Sonar Pro, 3D globe, market validation, competitor research]
+---
+
+# StarPlex
+
+StarPlex is an AI-powered startup intelligence platform designed to help entrepreneurs validate their business ideas and connect with the resources they need to succeed. Powered primarily by Perplexity Sonar Grounded LLM, it features an interactive 3D globe as its main UI. Simply enter your startup idea, and watch as the AI engine analyzes and visualizes insights directly on the globe—mapping out competitors, markets, demographics, VCs, and potential co-founders across the world in real-time.
+
+## Features
+
+- **Market Validation**: Analyzes if there's a need for the startup, market capitalization, geographic usage, historical growth, and projected growth.
+- **Competitor Research**: Identifies similar startups through an interactive map filter.
+- **Demographic Research**: Maps where the target market is located.
+- **VC & Co-Founder Discovery**: Helps find the best-fit VC and potential co-founders with interactive map filters.
+- **Interactive 3D Globe**: Visualizes all data and insights on an interactive globe.
+- **Slide Deck Generation**: Automatically generates a pitch deck based on the analysis.
+- **RAG Context-Aware Chatbot**: A chatbot that understands the user's business and data.
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- Python 3.8+
+- Perplexity API Key
+- Mapbox Token
+- SERP API Key
+
+## Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/JerryWu0430/StarPlex.git
+    cd StarPlex
+    ```
+
+2.  **Backend Setup:**
+    ```bash
+    cd backend
+    pip install -r requirements.txt
+    ```
+    Create a `.env` file and add your API keys:
+    ```
+    PERPLEXITY_API_KEY=your_api_key_here
+    MAPBOX_TOKEN=your_api_key_here
+    SERPAPI_KEY=your_api_key_here
+    ```
+    Then run the backend server:
+    ```bash
+    python3 main.py
+    ```
+
+3.  **Frontend Setup:**
+    ```bash
+    cd frontend
+    npm i
+    npm run dev
+    ```
+
+## Usage
+
+Once both the backend and frontend servers are running, open `http://localhost:3000` in your browser. Enter your startup idea in the input field to begin the analysis. Use the interactive globe and map filters to explore the generated data on market trends, competitors, and more.
+
+## Code Explanation
+
+StarPlex leverages the Perplexity API (primarily the Sonar Pro model) as its core intelligence engine. The backend, built with Python and FastAPI, handles requests for AI-powered analysis. It features a centralized client for Perplexity that includes caching to optimize API usage and structured prompts for reliable JSON outputs.
+
+The frontend is built with Next.js and uses Cobe for the 3D globe visualization and Mapbox GL for interactive maps.
+
+### Example Perplexity API Usage
+
+```python
+from perplexity import Perplexity
+
+client = Perplexity()
+response = client.chat.completions.create(
+    model="sonar",
+    messages=[
+        {"role": "system", "content": "You are a market analysis expert..."},
+        {"role": "user", "content": "Analyze the market for [startup idea]"}
+    ],
+    temperature=0.7
+)
+```
+
+## Links
+
+- [GitHub Repository](https://github.com/JerryWu0430/StarPlex)
+- [Devpost Submission](https://devpost.com/software/starplex)
+- [Live Demo](https://www.youtube.com/watch?v=iusCyDNzY60)
+- [Website](https://starplex.app)
